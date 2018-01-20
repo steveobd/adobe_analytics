@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 
-from copy import copy
+import copy
 import datetime
-from dateutil.parser import parse as parse_date
 import six
+from dateutil.parser import parse as parse_date
 
 
 class memoize:
@@ -51,7 +51,7 @@ class AddressableList(list):
             html += "<tr>"
             html += i._repr_html_()
             html += "</tr>"
-        html +="</table>"
+        html += "</table>"
         return html
 
     def __str__(self):
@@ -65,7 +65,7 @@ class AddressableList(list):
 
 
 def date(obj):
-    #used to ensure compatibility with Python3 without having to user six
+    # used to ensure compatibility with Python3 without having to use six
     try:
         basestring
     except NameError:
@@ -94,26 +94,16 @@ def wrap(obj):
         return [obj]
 
 
-def affix(prefix=None, base=None, suffix=None, connector='_'):
-    if prefix:
-        prefix = prefix + connector
-    else:
-        prefix = ''
-
-    if suffix:
-        suffix = connector + suffix
-    else:
-        suffix = ''
-
-    return prefix + base + suffix
+def affix(base, prefix="", suffix="", connector="_"):
+    parts = [part for part in [prefix, base, suffix] if part != ""]
+    return connector.join(parts)
 
 
 def translate(d, mapping):
-    d = copy(d)
+    d = copy.copy(d)
 
     for src, dest in mapping.items():
         if src in d:
             d[dest] = d[src]
             del d[src]
-
     return d

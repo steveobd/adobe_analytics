@@ -193,7 +193,7 @@ class Report(object):
             'metrics': ", ".join(map(str, self.metrics)),
             'elements': ", ".join(map(str, self.elements)),
         }
-        return "<omniture.Report\n(metrics)\n{metrics}(elements)\n{elements}>".format(**info)
+        return "<adobe_analyticsadobe_analytics.Report\n(metrics)\n{metrics}(elements)\n{elements}>".format(**info)
 
     def __div__(self):
         """ Give sensible options for Tab Completion mostly for iPython """

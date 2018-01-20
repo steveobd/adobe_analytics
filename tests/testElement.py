@@ -1,17 +1,12 @@
 #!/usr/bin/python
-
 import unittest
-import omniture
-import os
+import adobe_analytics
 
-creds = {}
-creds['username'] = os.environ['OMNITURE_USERNAME']
-creds['secret'] = os.environ['OMNITURE_SECRET']
 
 class ElementTest(unittest.TestCase):
     def setUp(self):
         fake_list = [{"id":"123","title":"ABC"},{"id":"456","title":"DEF"}]
-        self.valueList = omniture.elements.Value.list("metrics",fake_list,"test")
+        self.valueList = adobe_analytics.elements.Value.list("metrics", fake_list, "test")
 
     def test__repr__(self):
         self.assertEqual(self.valueList.__repr__(),"<AddressableList>",\

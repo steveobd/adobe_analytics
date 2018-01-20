@@ -3,18 +3,14 @@ from __future__ import print_function
 
 
 import unittest
-import omniture
+import adobe_analytics
 import os
 from datetime import date
 import pandas
 import datetime
 import requests_mock
 
-
-creds = {}
-creds['username'] = os.environ['OMNITURE_USERNAME']
-creds['secret'] = os.environ['OMNITURE_SECRET']
-test_report_suite = 'omniture.api-gateway'
+from tests import credentials_path, test_report_suite
 
 
 class ReportTest(unittest.TestCase):
@@ -36,13 +32,12 @@ class ReportTest(unittest.TestCase):
                 segments = get_segments_file.read()
 
             #setup mock responses
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Company.GetReportSuites', text=report_suites)
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.GetMetrics', text=metrics)
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.GetElements', text=elements)
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Segments.Get', text=segments)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Company.GetReportSuites', text=report_suites)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.GetMetrics', text=metrics)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.GetElements', text=elements)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Segments.Get', text=segments)
 
-
-            self.analytics = omniture.authenticate(creds['username'], creds['secret'])
+            self.analytics = adobe_analytics.authenticate(credentials_path=credentials_path)
             #force requests to happen in this method so they are cached
             self.analytics.suites[test_report_suite].metrics
             self.analytics.suites[test_report_suite].elements
@@ -65,8 +60,8 @@ class ReportTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         response = self.analytics.suites[test_report_suite].report.run()
 
@@ -111,13 +106,13 @@ class ReportTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         ranked = self.analytics.suites[test_report_suite].report.element("page").metric("pageviews").metric("visits")
         queue = []
         queue.append(ranked)
-        response = omniture.sync(queue)
+        response = adobe_analytics.sync(queue)
 
         for report in response:
             #Check Data
@@ -140,8 +135,8 @@ class ReportTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
 
         trended = self.analytics.suites[test_report_suite].report.element("page").metric("pageviews").granularity('hour').run()
@@ -165,8 +160,8 @@ class ReportTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         trended = self.analytics.suites[test_report_suite].report.element("page").metric("pageviews").granularity('hour').run()
         self.assertIsInstance(trended.dataframe, pandas.DataFrame, "Data Frame Object doesn't work")
@@ -184,8 +179,8 @@ class ReportTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         suite = self.analytics.suites[test_report_suite]
         report = suite.report.filter(suite.segments[0]).run()
@@ -212,8 +207,8 @@ class ReportTest(unittest.TestCase):
             ReportQueue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=ReportQueue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=ReportQueue)
 
         report = self.analytics.suites[0].report\
             .element('evar2',classification="Classification 1", disable_validation=True)\
@@ -238,8 +233,8 @@ class ReportTest(unittest.TestCase):
             ReportQueue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=ReportQueue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=ReportQueue)
 
         report = self.analytics.suites[0].report\
             .element('evar3',classification="Classification 1", disable_validation=True)\
@@ -265,8 +260,8 @@ class ReportTest(unittest.TestCase):
             basic_html = basic_html_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         trended = self.analytics.suites[test_report_suite].report\
             .element("page").metric("pageviews").granularity('hour').run()
@@ -285,8 +280,8 @@ class ReportTest(unittest.TestCase):
         with open(path+'/mock_objects/Report.Queue.json') as queue_file:
             report_queue = queue_file.read()
 
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         response = self.analytics.suites[test_report_suite].report.run()
         self.assertEqual(response.__div__(), \
@@ -303,11 +298,11 @@ class ReportTest(unittest.TestCase):
         with open(path+'/mock_objects/Report.Queue.json') as queue_file:
             report_queue = queue_file.read()
 
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         response = self.analytics.suites[test_report_suite].report.run()
-        test_string = """<omniture.Report
+        test_string = """<adobe_analytics.Report
 (metrics)
 ID pageviews                 | Name: Page Views 
 (elements)

@@ -153,7 +153,7 @@ class Query(object):
         Set a custom property in the report
 
         `set` is a way to add raw properties to the request,
-        for features that python-omniture does not support but the
+        for features that adobe_analytics does not support but the
         SiteCatalyst API does support. For convenience's sake,
         it will serialize Value and Element objects but will
         leave any other kind of value alone.
@@ -334,9 +334,7 @@ class Query(object):
 
     def sync(self, heartbeat=None, interval=0.01):
         """ Run the report synchronously,"""
-        print("sync called")
         if self.status == self.STATUSES[0]:
-            print("Queing Report")
             self.queue()
             self.probe(heartbeat, interval)
         if self.status == self.STATUSES[1]:

@@ -2,19 +2,17 @@
 
 import unittest
 import requests_mock
-import omniture
+import adobe_analytics
 import os
 
-creds = {}
-creds['username'] = os.environ['OMNITURE_USERNAME']
-creds['secret'] = os.environ['OMNITURE_SECRET']
-test_report_suite = "omniture.api-gateway"
+from tests import credentials_path, test_report_suite
 
 
 class AccountTest(unittest.TestCase):
     def setUp(self):
         with requests_mock.mock() as m:
             path = os.path.dirname(__file__)
+
             #read in mock response for Company.GetReportSuites to make tests faster
             with open(path+'/mock_objects/Company.GetReportSuites.json') as get_report_suites_file:
                 report_suites = get_report_suites_file.read()
@@ -34,28 +32,15 @@ class AccountTest(unittest.TestCase):
             m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.GetElements', text=elements)
             m.post('https://api.omniture.com/admin/1.4/rest/?method=Segments.Get', text=segments)
 
-
-            self.analytics = omniture.authenticate(creds['username'], creds['secret'])
+            self.analytics = adobe_analytics.authenticate(credentials_path=credentials_path)
             #force requests to happen in this method so they are cached
             self.analytics.suites[test_report_suite].metrics
             self.analytics.suites[test_report_suite].elements
             self.analytics.suites[test_report_suite].segments
 
-
-    def test_os_environ(self):
-        test = omniture.authenticate({'OMNITURE_USERNAME':creds['username'],
-                                           'OMNITURE_SECRET':creds['secret']})
-        self.assertEqual(test.username,creds['username'],
-                         "The username isn't getting set right: {}"
-                         .format(test.username))
-
-        self.assertEqual(test.secret,creds['secret'],
-                         "The secret isn't getting set right: {}"
-                         .format(test.secret))
-
     def test_suites(self):
-        self.assertIsInstance(self.analytics.suites, omniture.utils.AddressableList, "There are no suites being returned")
-        self.assertIsInstance(self.analytics.suites[test_report_suite], omniture.account.Suite, "There are no suites being returned")
+        self.assertIsInstance(self.analytics.suites, adobe_analytics.utils.AddressableList, "There are no suites being returned")
+        self.assertIsInstance(self.analytics.suites[test_report_suite], adobe_analytics.account.Suite, "There are no suites being returned")
 
     def test_simple_request(self):
         """ simplest request possible. Company.GetEndpoint is not an authenticated method
@@ -77,12 +62,12 @@ class AccountTest(unittest.TestCase):
     def test_metrics(self):
         """ Makes sure the suite properties can get the list of metrics
         """
-        self.assertIsInstance(self.analytics.suites[test_report_suite].metrics, omniture.utils.AddressableList)
+        self.assertIsInstance(self.analytics.suites[test_report_suite].metrics, adobe_analytics.utils.AddressableList)
 
     def test_elements(self):
         """ Makes sure the suite properties can get the list of elements
         """
-        self.assertIsInstance(self.analytics.suites[test_report_suite].elements, omniture.utils.AddressableList)
+        self.assertIsInstance(self.analytics.suites[test_report_suite].elements, adobe_analytics.utils.AddressableList)
 
     def test_basic_report(self):
         """ Make sure a basic report can be run
@@ -90,7 +75,7 @@ class AccountTest(unittest.TestCase):
         report = self.analytics.suites[test_report_suite].report
         queue = []
         queue.append(report)
-        response = omniture.sync(queue)
+        response = adobe_analytics.sync(queue)
         self.assertIsInstance(response, list)
 
     def test_json_report(self):
@@ -105,31 +90,29 @@ class AccountTest(unittest.TestCase):
             .json()
         self.assertEqual(report, self.analytics.jsonReport(report).json(), "The reports aren't serializating or de-serializing correctly in JSON")
 
-    
     def test_account_repr_html_(self):
         """Make sure the account are printing out in 
             HTML correctly for ipython notebooks"""
         html = self.analytics._repr_html_()
-        test_html = "<b>Username</b>: jgrover:Justin Grover Demo</br><b>Secret</b>: ***************</br><b>Report Suites</b>: 2</br><b>Endpoint</b>: https://api.omniture.com/admin/1.4/rest/</br>"
+        test_html = "<b>Username</b>: jgrover:Justin Grover Demo</br><b>Secret</b>: ***************</br><b>Report Suites</b>: 2</br><b>Endpoint</b>: https://api.adobe_analytics.com/admin/1.4/rest/</br>"
         self.assertEqual(html, test_html)
         
     def test_account__str__(self):
         """ Make sure the custom str works """
         mystr = self.analytics.__str__()
-        test_str = "Analytics Account -------------\n Username:             jgrover:Justin Grover Demo \n Report Suites: 2 \n Endpoint: https://api.omniture.com/admin/1.4/rest/"
+        test_str = "Analytics Account -------------\n Username:             jgrover:Justin Grover Demo \n Report Suites: 2 \n Endpoint: https://api.adobe_analyticsomniture.com/admin/1.4/rest/"
         self.assertEqual(mystr, test_str)
 
     def test_suite_repr_html_(self):
-        """Make sure the Report Suites are printing okay for 
-        ipython notebooks """
+        """Make sure the Report Suites are printing okay for ipython notebooks """
         html = self.analytics.suites[0]._repr_html_()
-        test_html = "<td>omniture.api-gateway</td><td>test_suite</td>"
+        test_html = "<td>adobe_analytics.api-gateway</td><td>test_suite</td>"
         self.assertEqual(html, test_html)
         
     def test_suite__str__(self):
         """Make sure the str represntation is working """
         mystr = self.analytics.suites[0].__str__()
-        test_str = "ID omniture.api-gateway      | Name: test_suite \n"
+        test_str = "ID adobe_analytics.api-gateway      | Name: test_suite \n"
         self.assertEqual(mystr,test_str)
 
 

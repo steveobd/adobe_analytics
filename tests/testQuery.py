@@ -2,13 +2,10 @@
 
 import unittest
 import requests_mock
-import omniture
+import adobe_analytics
 import os
 
-creds = {}
-creds['username'] = os.environ['OMNITURE_USERNAME']
-creds['secret'] = os.environ['OMNITURE_SECRET']
-test_report_suite = 'omniture.api-gateway'
+from tests import credentials_path, test_report_suite
 dateTo = "2015-06-02"
 dateFrom = "2015-06-01"
 date = dateTo
@@ -32,13 +29,12 @@ class QueryTest(unittest.TestCase):
                 segments = get_segments_file.read()
 
             #setup mock responses
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Company.GetReportSuites', text=report_suites)
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.GetMetrics', text=metrics)
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.GetElements', text=elements)
-            m.post('https://api.omniture.com/admin/1.4/rest/?method=Segments.Get', text=segments)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Company.GetReportSuites', text=report_suites)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.GetMetrics', text=metrics)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.GetElements', text=elements)
+            m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Segments.Get', text=segments)
 
-
-            self.analytics = omniture.authenticate(creds['username'], creds['secret'])
+            self.analytics = adobe_analytics.authenticate(credentials_path=credentials_path)
             #force requests to happen in this method so they are cached
             self.analytics.suites[test_report_suite].metrics
             self.analytics.suites[test_report_suite].elements
@@ -65,11 +61,11 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
 
-        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(), omniture.Report, "The run method doesn't work to create a report")
+        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(), adobe_analytics.Report, "The run method doesn't work to create a report")
         
     @requests_mock.mock()
     def test_report_run(self,m):
@@ -83,13 +79,13 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
 
-        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=0.01), omniture.Report, "The run method doesn't work to create a report")
-        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=2), omniture.Report, "The run method doesn't work to create a report")
-        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=31), omniture.Report, "The run method doesn't work to create a report")
+        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=0.01), adobe_analytics.Report, "The run method doesn't work to create a report")
+        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=2), adobe_analytics.Report, "The run method doesn't work to create a report")
+        self.assertIsInstance(self.analytics.suites[test_report_suite].report.run(interval=31), adobe_analytics.Report, "The run method doesn't work to create a report")
 
     @requests_mock.mock()
     def test_report_async(self,m):
@@ -103,13 +99,13 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         query = self.analytics.suites[test_report_suite].report.async()
-        self.assertIsInstance(query, omniture.Query, "The Async method doesn't work")
+        self.assertIsInstance(query, adobe_analytics.Query, "The Async method doesn't work")
         self.assertTrue(query.check(), "The check method is weird")
-        self.assertIsInstance(query.get_report(), omniture.Report, "The check method is weird")
+        self.assertIsInstance(query.get_report(), adobe_analytics.Report, "The check method is weird")
     
     @requests_mock.mock()
     def test_report_bad_async(self,m):
@@ -123,16 +119,16 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Get', text=json_response)
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Get', text=json_response)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
         
-        with self.assertRaises(omniture.query.ReportNotSubmittedError): 
+        with self.assertRaises(adobe_analytics.query.ReportNotSubmittedError):
             self.analytics.suites[test_report_suite].report.get_report()
         query = self.analytics.suites[test_report_suite].report.async()
-        self.assertIsInstance(query, omniture.Query, "The Async method doesn't work")
+        self.assertIsInstance(query, adobe_analytics.Query, "The Async method doesn't work")
         self.assertFalse(query.check(), "The check method is weird")
-        with self.assertRaises(omniture.reports.ReportNotReadyError): 
+        with self.assertRaises(adobe_analytics.reports.ReportNotReadyError):
             query.get_report()
             
     #@unittest.skip("skip")
@@ -145,7 +141,7 @@ class QueryTest(unittest.TestCase):
         basic_report = self.analytics.suites[test_report_suite].report.metric("orders").granularity("hour")
         queue = []
         queue.append(basic_report)
-        response = omniture.sync(queue)
+        response = adobe_analytics.sync(queue)
 
     #@unittest.skip("skip")
     def test_double_element(self):
@@ -425,9 +421,9 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
-        with self.assertRaises(omniture.InvalidReportError) as e:
+        with self.assertRaises(adobe_analytics.InvalidReportError) as e:
             report = self.analytics.suites[test_report_suite].report\
                 .metric("bad_metric", disable_validation=True)\
                 .run()
@@ -443,9 +439,9 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
-        with self.assertRaises(omniture.InvalidReportError) as e:
+        with self.assertRaises(adobe_analytics.InvalidReportError) as e:
             report = self.analytics.suites[test_report_suite].report\
                 .element("bad_element", disable_validation=True)\
                 .run()
@@ -462,9 +458,9 @@ class QueryTest(unittest.TestCase):
             report_queue = queue_file.read()
 
         #setup mock object
-        m.post('https://api.omniture.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
+        m.post('https://api.adobe_analytics.com/admin/1.4/rest/?method=Report.Queue', text=report_queue)
 
-        with self.assertRaises(omniture.InvalidReportError) as e:
+        with self.assertRaises(adobe_analytics.InvalidReportError) as e:
             report = self.analytics.suites[test_report_suite].report\
                 .filter("bad_segment", disable_validation=True)\
                 .run()
@@ -542,7 +538,7 @@ class QueryTest(unittest.TestCase):
         l = self.analytics.suites[test_report_suite].report\
             ._serialize(['1','2'])
         obj = self.analytics.suites[test_report_suite].report\
-            ._serialize(omniture.Value('title',"id",{}))
+            ._serialize(adobe_analytics.Value('title', "id", {}))
             
         self.assertEqual(l, ['1','2'])
         self.assertEqual(list(obj), ["id"])

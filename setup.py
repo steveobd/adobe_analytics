@@ -1,28 +1,57 @@
-from setuptools import setup, find_packages
+import os
+import io
+import re
+import setuptools
 
-exec(open('omniture/version.py').read())
-setup(name='omniture',
-      description='A wrapper for the Adobe Analytics (Omniture and SiteCatalyst) web analytics API.',
-      long_description=open('README.md').read(),
-      author='Stijn Debrouwere',
-      author_email='stijn@stdout.be',
-      url='http://stdbrouw.github.com/python-omniture/',
-      download_url='http://www.github.com/stdbrouw/python-omniture/tarball/master',
-      version=__version__,
-      license='MIT',
-      packages=find_packages(),
-      keywords='data analytics api wrapper adobe omniture',
-      install_requires=[
-            'requests',
-            'python-dateutil',
-      ],
-      classifiers=['Development Status :: 4 - Beta',
-                   'Intended Audience :: Developers',
-                   'License :: OSI Approved :: MIT License',
-                   'Operating System :: OS Independent',
-                   'Programming Language :: Python',
-                   'Topic :: Scientific/Engineering :: Information Analysis',
-                   'Programming Language :: Python :: 2.7',
-                   'Programming Language :: Python :: 3'
-                   ],
-      )
+
+# Read version from __init__.py file of project
+# Taken from https://packaging.python.org/guides/single-sourcing-package-version/
+def read(*names, **kwargs):
+    file_path = os.path.dirname(__file__)
+    with io.open(
+            os.path.join(file_path, *names),
+            encoding=kwargs.get("encoding", "utf8")) as fp:
+        return fp.read()
+
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
+
+PACKAGES = [
+    "adobe_analytics"
+]
+
+DEPENDENCIES = [
+    'requests',
+    'python-dateutil',
+]
+
+CLASSIFIERS = [
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Topic :: Scientific/Engineering :: Information Analysis',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.6'
+]
+
+setuptools.setup(
+    name='adobe_analytics',
+    description='A wrapper for the Adobe Analytics (Omniture and SiteCatalyst) web analytics API.',
+    keywords='data analytics api wrapper adobe adobe_analytics',
+    author='Martin Winkel',
+    author_email='martin.winkel.ppsn@gmail.com',
+    url='http://stdbrouw.github.com/adobe_analytics/',
+    download_url='http://www.github.com/stdbrouw/adobe_analytics/tarball/master',
+    version=find_version("adobe_analytics", "__init__.py"),
+    license='MIT',
+    packages=PACKAGES,
+    install_requires=DEPENDENCIES,
+    classifiers=CLASSIFIERS
+)
