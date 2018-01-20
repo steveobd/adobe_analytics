@@ -6,4 +6,5 @@ six==1.11.0
 pandas==0.22.0
 
 # for tests
+pytest==3.3.2
 requests-mock==1.4.0

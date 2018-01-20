@@ -1,36 +1,27 @@
 # encoding: utf-8
-from __future__ import absolute_import
-import json
+from __future__ import absolute_import, print_function
+import os
 
-from .account import Account
-from .suite import Suite
-from .elements import Value
-from .query import Query, ReportNotSubmittedError
-from .reports import InvalidReportError, Report, DataWarehouseReport
-from .utils import AddressableList
 
 __version__ = '0.0.1'
+app_dir = os.path.dirname(__file__)
+app_dir_components = app_dir.split(os.sep)
+base_dir = os.sep.join(app_dir_components[:-1])
+credentials_path = base_dir+"/aa_credentials.json"
 
-
-def authenticate(username=None, password=None, credentials_path=None, endpoint=Account.DEFAULT_ENDPOINT):
-    assert (username and password) or credentials_path, "Please provide credentials for login."
-    if credentials_path is not None:
-        username, password = credentials_from_json(credentials_path)
-    return Account(username, password, endpoint)
-
-
-def credentials_from_json(json_path):
-    with open(json_path, mode="r") as json_file:
-        credentials = json.load(json_file)
-    return credentials["username"], credentials["password"]
+from adobe_analytics.client import Client
+from adobe_analytics.suite import Suite
+from adobe_analytics.elements import Value
+from adobe_analytics.query import Query, ReportNotSubmittedError
+from adobe_analytics.utils import AddressableList
 
 
 def queue(queries):
     if isinstance(queries, dict):
         queries = queries.values()
 
-    for query in queries:
-        query.queue()
+    for q in queries:
+        q.queue()
 
 
 def sync(queries, heartbeat=None, interval=1):

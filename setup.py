@@ -41,10 +41,23 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.6'
 ]
 
+KEYWORDS = [
+    'data',
+    'analytics',
+    'api',
+    'wrapper',
+    'adobe',
+    'omniture',
+    'sitecatalyst',
+    'python',
+    'report',
+    'bi'
+]
+
 setuptools.setup(
     name='adobe_analytics',
-    description='A wrapper for the Adobe Analytics (Omniture and SiteCatalyst) web analytics API.',
-    keywords='data analytics api wrapper adobe adobe_analytics',
+    description='A wrapper for the Adobe Analytics API.',
+    keywords=" ".join(KEYWORDS),
     author='Martin Winkel',
     author_email='martin.winkel.ppsn@gmail.com',
     url='http://stdbrouw.github.com/adobe_analytics/',

@@ -28,10 +28,11 @@ class InvalidReportError(Exception):
         self.message = "{error}: {error_description} ({error_uri})".format(**error)
         super(InvalidReportError, self).__init__(self.message)
 
+
 class ReportNotReadyError(Exception):
     """ Exception that is raised when a report is not ready to be downloaded
     """
-    def __init__(self,error):
+    def __init__(self, error):
         self.log = logging.getLogger(__name__)
         self.log.debug("Report Not Ready")
         super(ReportNotReadyError, self).__init__("Report Not Ready")
@@ -226,10 +227,5 @@ class Report(object):
     def __str__(self):
         return json.dumps(self.raw,indent=4, separators=(',', ': '),sort_keys=True)
 
+
 Report.method = "Queue"
-
-
-class DataWarehouseReport(object):
-    pass
-
-DataWarehouseReport.method = 'Request'

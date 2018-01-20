@@ -24,21 +24,23 @@ def immutable(method):
 
     return wrapped_method
 
+
 class ReportNotSubmittedError(Exception):
     """ Exception that is raised when a is requested by hasn't been submitted 
         to Adobe
     """
-    def __init__(self,error):
+    def __init__(self, error):
         self.log = logging.getLogger(__name__)
         self.log.debug("Report Has not been submitted, call async() or run()")
         super(ReportNotSubmittedError, self).__init__("Report Not Submitted")
+
 
 class Query(object):
     """ Lets you build a query to the Reporting API for Adobe Analytics.
 
     Methods in this object are chainable. For example
-    >>> report = report.element("page").element("prop1").
-        metric("pageviews").granularity("day").run()
+    >>> report = report.element("page").element("prop1") \
+        .metric("pageviews").granularity("day").run()
     Making it easy to create a report.
 
     To see the raw definition use
@@ -368,7 +370,6 @@ class Query(object):
         sys.stdout.write('.')
         sys.stdout.flush()
 
-
     def check(self):
         """
             Basically an alias to is ready to make the interface a bit better
@@ -377,9 +378,8 @@ class Query(object):
 
     def cancel(self):
         """ Cancels a the report from the Queue on the Adobe side. """
-        return self.suite.request('Report',
-                                      'CancelReport',
-                                      {'reportID': self.id})
+        return self.suite.request('Report', 'CancelReport', {'reportID': self.id})
+
     def json(self):
         """ Return a JSON string of the Request """
         return str(json.dumps(self.build(), indent=4, separators=(',', ': '), sort_keys=True))
@@ -389,18 +389,17 @@ class Query(object):
 
     def _repr_html_(self):
         """ Format in HTML for iPython Users """
-        report = { str(key):value for key,value in self.raw.items() }
+        report = {str(key):value for key,value in self.raw.items()}
         html = "Current Report Settings</br>"
-        for k,v in sorted(list(report.items())):
-            html += "<b>{0}</b>: {1} </br>".format(k,v)
+        for k, v in sorted(list(report.items())):
+            html += "<b>{0}</b>: {1} </br>".format(k, v)
         if self.id:
             html += "This report has been submitted</br>"
             html += "<b>{0}</b>: {1} </br>".format("ReportId", self.id)
         return html
 
-
     def __dir__(self):
         """ Give sensible options for Tab Completion mostly for iPython """
-        return ['async','breakdown','cancel','clone','currentData', 'element',
-                'filter', 'granularity', 'id','json' ,'metric', 'queue', 'range', 'raw', 'report',
+        return ['async', 'breakdown', 'cancel', 'clone', 'currentData', 'element',
+                'filter', 'granularity', 'id', 'json', 'metric', 'queue', 'range', 'raw', 'report',
                 'request', 'run', 'set', 'sortBy', 'suite']
