@@ -2,7 +2,7 @@
 
 ## !Caution!
 Hey guys, I'm refactoring and redesigning the package right now. For now most of the
-functionality is broken. I'll fix it in the coming days (Martin, 2017-01-20).
+functionality is broken. I'll fix it in the coming days (Martin, 2018-01-20).
 
 ## Description
 `adobe_analytics` is a wrapper around the Adobe Analytics REST API.
