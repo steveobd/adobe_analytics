@@ -11,9 +11,7 @@ credentials_path = base_dir+"/aa_credentials.json"
 
 from adobe_analytics.client import Client
 from adobe_analytics.suite import Suite
-from adobe_analytics.elements import Value
 from adobe_analytics.query import Query, ReportNotSubmittedError
-from adobe_analytics.utils import AddressableList
 
 
 def queue(queries):

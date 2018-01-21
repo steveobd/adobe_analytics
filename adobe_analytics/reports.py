@@ -6,8 +6,6 @@ import logging
 from datetime import datetime
 import json
 
-from .elements import Value
-
 
 class InvalidReportError(Exception):
     """
@@ -63,8 +61,8 @@ class Report(object):
         }
         self.log.debug("Report Wait Time: %s, Report Execution Time: %s", self.timing['queue'], self.timing['execution'])
         self.report = report = self.raw['report']
-        self.metrics = Value.list('metrics', report['metrics'], self.suite, 'name', 'id')
-        self.elements = Value.list('elements', report['elements'], self.suite, 'name', 'id')
+        self.metrics = Element.list('metrics', report['metrics'], self.suite, 'name', 'id')
+        self.elements = Element.list('elements', report['elements'], self.suite, 'name', 'id')
         self.period = str(report['period'])
         self.type = str(report['type'])
 

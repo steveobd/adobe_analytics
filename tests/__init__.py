@@ -3,10 +3,10 @@ from adobe_analytics import Client
 import pytest
 import requests_mock
 
+test_dir = base_dir+"/tests"
+mock_dir = test_dir+"/mock_objects"
 
-test_report_suite = "omniture.api-gateway"
-
-mock_dir = base_dir+"/tests/mock_objects"
+test_suite_id = "omniture.api-gateway"
 
 
 @pytest.fixture()
@@ -16,9 +16,9 @@ def fix_client():
 
         # results are cached
         client = Client.from_json(file_path=credentials_path)
-        # _ = client.suites[test_report_suite].metrics
-        # _ = client.suites[test_report_suite].elements
-        # _ = client.suites[test_report_suite].segments
+        client.suites[test_suite_id].metrics()
+        client.suites[test_suite_id].dimensions()
+        client.suites[test_suite_id].segments()
         return client
 
 

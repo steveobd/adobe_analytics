@@ -10,7 +10,6 @@ import json
 import logging
 import sys
 
-from .elements import Value
 from . import reports
 from . import utils
 
@@ -68,7 +67,7 @@ class Query(object):
         self.unprocessed_response = None
 
     def _normalize_value(self, value, category):
-        if isinstance(value, Value):
+        if isinstance(value, Element):
             return value
         else:
             return getattr(self.suite, category)[value]
@@ -85,7 +84,7 @@ class Query(object):
     def _serialize(self, obj):
         if isinstance(obj, list):
             return [self._serialize(el) for el in obj]
-        elif isinstance(obj, Value):
+        elif isinstance(obj, Element):
             return obj.serialize()
         else:
             return obj

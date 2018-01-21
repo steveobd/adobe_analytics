@@ -5,7 +5,6 @@ import hashlib
 import json
 from datetime import datetime
 
-import adobe_analytics.utils as utils
 from adobe_analytics.suite import Suite
 
 
@@ -30,9 +29,8 @@ class Client(object):
 
     def report_suites(self):
         response = self.request('Company', 'GetReportSuites')
-        print(response)
         suites = [Suite.from_dict(suite, self) for suite in response['report_suites']]
-        return utils.AddressableList(suites)
+        return {suite.id: suite for suite in suites}
 
     def request(self, api, method, query=None):
         """ Compare with https://marketing.adobe.com/developer/api-explorer """
@@ -41,7 +39,7 @@ class Client(object):
 
         response = requests.post(
             self.endpoint,
-            params={'method': api + '.' + method},
+            params={'method': api_method},
             data=json.dumps(query),
             headers=self._build_headers()
         )
@@ -64,8 +62,8 @@ class Client(object):
         header = 'UsernameToken ' + self._serialize_header(properties)
         return {'X-WSSE': header}
 
-    def __str__(self):
-        return "Username: {0}\nReport Suites: {1}\nEndpoint: {2}"\
+    def __repr__(self):
+        return "User: {0}\nReport Suites: {1}\nEndpoint: {2}"\
                 .format(self.username, len(self.suites), self.endpoint)
 
     @staticmethod
@@ -76,7 +74,15 @@ class Client(object):
 
 if __name__ == '__main__':
     from adobe_analytics import credentials_path
+    from adobe_analytics import Client
+    import requests_mock
+    from tests import initiate_base_mock_responses, test_suite_id
 
-    client = Client.from_json(credentials_path)
-    # resp = client.request(api="Company", method="GetEndpoint")
-    # print(resp)
+    with requests_mock.mock() as m:
+        initiate_base_mock_responses(mock_context=m)
+
+        client = Client.from_json(file_path=credentials_path)
+        suite = client.suites[test_suite_id]
+        print(type(suite.metrics()))
+        print(type(suite.dimensions()))
+        print(type(suite.segments()))
