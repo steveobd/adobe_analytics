@@ -53,5 +53,9 @@ class Suite(object):
     def _response_to_dict(data):
         return {item["id"]: item for item in data}
 
+    def download_report(self, report_definition):
+        report_definition["reportSuiteID"] = self.id
+
+
     def __repr__(self):
         return "{name} ({id})".format(id=self.id, name=self.name)
