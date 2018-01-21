@@ -1,5 +1,11 @@
-# py_adobe_analytics
-`py_adobe_analytics` is a wrapper around the Adobe Analytics REST API.
+# Adobe Analytics
+
+## !Caution!
+Hey guys, I'm refactoring and redesigning the package right now. For now most of the
+functionality is broken. I'll fix it in the coming days (Martin, 2017-01-20).
+
+## Description
+`adobe_analytics` is a wrapper around the Adobe Analytics REST API.
 
 It is not meant to be comprehensive. Instead, it provides a high-level interface
 to many of the common reporting queries, and allows you to do construct other queries
@@ -12,7 +18,7 @@ Through PyPI (will be added end of Jan 2018):
 
 Latest and greatest:
 
-    pip install git+http://github.com/SaturnFromTitan/py_adobe_analytics.git
+    pip install git+http://github.com/SaturnFromTitan/adobe_analytics.git
 
     supports python 2.7 and 3.5+
 
