@@ -5,7 +5,7 @@ class ReportDefinition:
     GRANULARITIES = ["hour", "day", "week", "month", "quarter", "year"]
 
     def __init__(self, metrics, dimensions, segments=None, date_from=None,
-                 date_to=None, last_days=1, granularity=None, **kwargs):
+                 date_to=None, last_days=None, granularity=None, **kwargs):
         self.dimensions = dimensions
         self.metrics = metrics
         self.segments = segments
@@ -18,9 +18,23 @@ class ReportDefinition:
         self._validate_granularity_input()
         self.kwargs = kwargs
 
+    def _prepare_metrics(self):
+        return self._prepare_abstract(variable=self.metrics, name="metrics", func=self._format_id)
+
+    def _prepare_segments(self):
+        return self._prepare_abstract(variable=self.segments, name="segments", func=self._format_id)
+
     def _prepare_dimensions(self):
-        assert isinstance(self.dimensions, list), "dimensions must be a list."
-        return [self._clean_dimension(entry) for entry in self.dimensions]
+        return self._prepare_abstract(variable=self.dimensions, name="dimensions", func=self._clean_dimension)
+
+    @staticmethod
+    def _prepare_abstract(variable, name, func):
+        error_msg = "{} must be str or list.".format(name)
+        assert isinstance(variable, (str, list)), error_msg
+
+        if isinstance(variable, str):
+            variable = [variable]
+        return[func(entry) for entry in variable]
 
     def _clean_dimension(self, dimension):
         if isinstance(dimension, str):
@@ -29,14 +43,6 @@ class ReportDefinition:
             return dimension
         else:
             raise ValueError("Unexpected type of dimension. Please use str or dict.")
-
-    def _prepare_metrics(self):
-        assert isinstance(self.metrics, list), "metrics must be a list."
-        return [self._format_id(metric_id) for metric_id in self.metrics]
-
-    def _prepare_segments(self):
-        assert isinstance(self.segments, list), "segments must be a list."
-        return [self._format_id(segment_id) for segment_id in self.metrics]
 
     @staticmethod
     def _format_id(dimension_id):

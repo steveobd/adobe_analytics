@@ -70,21 +70,3 @@ class Client(object):
     def _serialize_header(properties):
         header = ['{key}="{value}"'.format(key=k, value=v) for k, v in properties.items()]
         return ', '.join(header)
-
-
-if __name__ == '__main__':
-    from adobe_analytics import credentials_path
-    from adobe_analytics import Client, ReportDefinition
-
-    client = Client.from_json(file_path=credentials_path)
-    suite = client.suites["clearlycaprod"]
-
-    report_def = ReportDefinition(
-        dimensions=["page"],
-        metrics=["pageviews"],
-        last_days=1,
-        granularity="day"
-    )
-    report = suite.download_report(definition=report_def)
-    print(report.dataframe)
-    print(type(report.dataframe))
