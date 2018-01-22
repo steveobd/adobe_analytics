@@ -1,4 +1,5 @@
 import time
+import itertools
 
 from adobe_analytics.report import Report
 from adobe_analytics.report_definition import ReportDefinition
@@ -38,11 +39,18 @@ class ReportDownloader:
         return response["reportID"]
 
     def check_until_ready(self, report):
-        response = self.check(report)
-        while response is None:
-            time.sleep(30)
+        for poll_attempt in itertools.count():
             response = self.check(report)
-        return response
+            if response is not None:
+                return response
+
+            self._sleep(poll_attempt)
+
+    @staticmethod
+    def _sleep(poll_attempt):
+        exponential = 5 * 2**poll_attempt
+        interval = min(exponential, 300)  # max 5 min sleep
+        time.sleep(interval)
 
     def check(self, report):
         client = self.suite.client
