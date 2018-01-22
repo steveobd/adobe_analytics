@@ -32,15 +32,15 @@ class Client(object):
         suites = [Suite.from_dict(suite, self) for suite in response['report_suites']]
         return {suite.id: suite for suite in suites}
 
-    def request(self, api, method, query=None):
+    def request(self, api, method, data=None):
         """ Compare with https://marketing.adobe.com/developer/api-explorer """
         api_method = '{0}.{1}'.format(api, method)
-        query = query or dict()
+        data = data or dict()
 
         response = requests.post(
             self.endpoint,
             params={'method': api_method},
-            data=json.dumps(query),
+            data=json.dumps(data),
             headers=self._build_headers()
         )
         return response.json()

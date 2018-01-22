@@ -1,7 +1,12 @@
 from __future__ import absolute_import
 from __future__ import print_function
-
+import time
 import functools
+
+from adobe_analytics.report_downloader import ReportDownloader
+from adobe_analytics.report_definition import ReportDefinition
+from adobe_analytics.report import Report
+
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
@@ -11,6 +16,7 @@ class Suite(object):
         self.name = name
         self.id = suite_id
         self.client = client
+        self.downloader = ReportDownloader(self)
 
     @classmethod
     def from_dict(cls, suite, client):
@@ -21,7 +27,7 @@ class Suite(object):
         response = self.client.request(
             api='Report',
             method='GetMetrics',
-            query={
+            data={
                 "reportSuiteID": self.id
             }
         )
@@ -32,7 +38,7 @@ class Suite(object):
         response = self.client.request(
             api='Report',
             method='GetElements',
-            query={
+            data={
                 "reportSuiteID": self.id
             }
         )
@@ -43,7 +49,7 @@ class Suite(object):
         response = self.client.request(
             api='Segments',
             method='Get',
-            query={
+            data={
                 "accessLevel": "shared"
             }
         )
@@ -53,9 +59,16 @@ class Suite(object):
     def _response_to_dict(data):
         return {item["id"]: item for item in data}
 
-    def download_report(self, report_definition):
-        report_definition["reportSuiteID"] = self.id
+    def download_report(self, definition):
+        report = self.download_report_async(definition)
+        report.raw_data = self.downloader.check_until_ready(report)
+        report.parse()
+        return report
 
+    def download_report_async(self, definition):
+        report = Report.from_universal_definition_and_suite(definition, suite=self)
+        report.id = self.downloader.queue(report)
+        return report
 
     def __repr__(self):
         return "{name} ({id})".format(id=self.id, name=self.name)

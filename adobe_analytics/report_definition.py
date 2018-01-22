@@ -1,3 +1,4 @@
+import copy
 import datetime
 import dateutil.relativedelta
 
@@ -21,7 +22,6 @@ class ReportDefinition:
 
         self.sort_by = sort_by
         self.source = source
-
         self.kwargs = kwargs
 
     def _prepare_dimensions(self):
@@ -85,4 +85,10 @@ class ReportDefinition:
         }
         if self.kwargs:
             report_definition.update(self.kwargs)
+        return report_definition
+
+    @staticmethod
+    def assert_dict(report_definition):
+        if isinstance(report_definition, ReportDefinition):
+            return report_definition.as_dict()
         return report_definition
