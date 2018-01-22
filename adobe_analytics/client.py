@@ -29,7 +29,7 @@ class Client(object):
 
     def report_suites(self):
         response = self.request('Company', 'GetReportSuites')
-        suites = [Suite.from_dict(suite, self) for suite in response['report_suites']]
+        suites = [Suite._from_dict(suite, self) for suite in response['report_suites']]
         return {suite.id: suite for suite in suites}
 
     def request(self, api, method, data=None):
@@ -74,15 +74,17 @@ class Client(object):
 
 if __name__ == '__main__':
     from adobe_analytics import credentials_path
-    from adobe_analytics import Client
-    import requests_mock
-    from tests import initiate_base_mock_responses, test_suite_id
+    from adobe_analytics import Client, ReportDefinition
 
-    with requests_mock.mock() as m:
-        initiate_base_mock_responses(mock_context=m)
+    client = Client.from_json(file_path=credentials_path)
+    suite = client.suites["clearlycaprod"]
 
-        client = Client.from_json(file_path=credentials_path)
-        suite = client.suites[test_suite_id]
-        print(type(suite.metrics()))
-        print(type(suite.dimensions()))
-        print(type(suite.segments()))
+    report_def = ReportDefinition(
+        dimensions=["page"],
+        metrics=["pageviews"],
+        last_days=1,
+        granularity="day"
+    )
+    report = suite.download_report(definition=report_def)
+    print(report.dataframe)
+    print(type(report.dataframe))

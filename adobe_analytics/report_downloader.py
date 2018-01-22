@@ -10,7 +10,7 @@ class ReportDownloader:
 
         request_data = self._build_request_data_definition(report)
         response = client.request(
-            api="Request",
+            api="Report",
             method="Validate",
             data=request_data
         )
@@ -21,7 +21,7 @@ class ReportDownloader:
 
         request_data = self._build_request_data_definition(report)
         response = client.request(
-            api="Request",
+            api="Report",
             method="Queue",
             data=request_data
         )

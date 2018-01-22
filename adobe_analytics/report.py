@@ -7,10 +7,11 @@ from adobe_analytics.report_definition import ReportDefinition
 class Report:
     def __init__(self, definition=None, report_id=None):
         assert definition or report_id, "Provide either report_definition or report_id."
-        assert "reportSuiteID" in definition, "Must provide report suite id."
+        if definition is not None:
+            assert "reportSuiteID" in definition, "Must provide report suite id."
 
-        self.definition = definition
-        self.report_id = report_id
+        self.definition = definition  # used by ReportDownloader. Q: Really necessary here?
+        self.id = report_id
         self.raw_response = None
 
         self.dataframe = None

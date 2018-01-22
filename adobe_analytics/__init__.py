@@ -11,4 +11,4 @@ base_dir = os.sep.join(app_dir_components[:-1])
 credentials_path = base_dir+"/aa_credentials.json"
 
 from adobe_analytics.client import Client
-from adobe_analytics.suite import Suite
+from adobe_analytics.report_definition import ReportDefinition
