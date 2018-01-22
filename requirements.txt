@@ -2,8 +2,6 @@
 requests==2.18.4
 six==1.11.0
 python-dateutil==2.6.1
-
-# for dataframe support
 pandas==0.22.0
 
 # for tests

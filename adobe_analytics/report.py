@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+
 from adobe_analytics.report_definition import ReportDefinition
 
 
@@ -10,9 +13,6 @@ class Report:
         self.report_id = report_id
         self.raw_response = None
 
-        self.dimensions = None
-        self.metrics = None
-        self.data = None
         self.dataframe = None
 
     @classmethod
@@ -23,84 +23,67 @@ class Report:
 
     def parse(self):
         assert self.raw_response is not None, "Download report data first."
-        self.parse_header()
-        self.parse_data()
+        raw_data = self.raw_response['report']["data"]
 
-    def parse_header(self):
+        dimensions, metrics = self._parse_header()
+        data = self._parse_data(raw_data, metric_count=len(metrics))
+        header = self._fix_header(dimensions, metrics, data)
+
+        self.dataframe = pd.DataFrame(data, columns=header)
+
+    @staticmethod
+    def _fix_header(dimensions, metrics, data):
+        header = dimensions + metrics
+        if len(header) != len(data[0]):  # can only be with granularity breakdown in data warehouse request
+            return ["Granularity"] + header
+        return header
+
+    def _parse_header(self):
         report = self.raw_response['report']
-        self.dimensions = [entry["name"] for entry in report["elements"]]
-        self.metrics = [entry["name"] for entry in report["metrics"]]
 
-    def parse_data(self, row, level=0, upper_levels=None):
-        """ This method is recursive. """
-        data = dict()
-        data_set = list()
+        dimensions = [(e["classification"] if "classification" in e else e["name"]) for e in report["elements"]]
+        metrics = [m["name"] for m in report["metrics"]]
+        return dimensions, metrics
 
-        # merge in the upper levels
-        if upper_levels is not None:
-            data.update(upper_levels)
-
-        if isinstance(row, list):
-            for r in row:
-                # on the first call set add to the empty list
-                pr = self.parse_data(r, level, data.copy())
-                if isinstance(pr, dict):
-                    data_set.append(pr)
-                # otherwise add to the existing list
-                else:
-                    data_set.extend(pr)
-
-        # pull out the metrics from the lowest level
-        if isinstance(row, dict):
-            # pull out any relevant data from the current record
-            # Handle datetime isn't in the elements list for trended reports
-            if level == 0 and self.type == "trended":
-                element = "datetime"
-            elif self.type == "trended":
-                if hasattr(self.elements[level - 1], 'classification'):
-                    # handle the case where there are multiple classifications
-                    element = str(self.elements[level - 1].id) + ' | ' + str(
-                        self.elements[level - 1].classification)
-                else:
-                    element = str(self.elements[level - 1].id)
-            else:
-                if hasattr(self.elements[level], 'classification'):
-                    # handle the case where there are multiple classifications
-                    element = str(self.elements[level].id) + ' | ' + str(self.elements[level].classification)
-                else:
-                    element = str(self.elements[level].id)
-
-            if element == "datetime":
-                data[element] = datetime(int(row.get('year', 0)), int(row.get('month', 0)), int(row.get('day', 0)),
-                                         int(row.get('hour', 0)))
-                data["datetime_friendly"] = str(row['name'])
-            else:
-                try:
-                    data[element] = str(row['name'])
-
-                # If the name value is Null or non-encodable value, return null
-                except:
-                    data[element] = "null"
-
-            # parse out any breakdowns and add to the data set
-            if 'breakdown' in row and len(row['breakdown']) > 0:
-                data_set.extend(self.parse_data(row['breakdown'], level + 1, data))
-            elif 'counts' in row:
-                for index, metric in enumerate(row['counts']):
-                    # decide what type of event
-                    if self.metrics[index].decimals > 0 or metric.find('.') > -1:
-                        data[str(self.metrics[index].id)] = float(metric)
-                    else:
-                        data[str(self.metrics[index].id)] = int(metric)
-
-        if len(data_set) > 0:
-            return data_set
+    def _parse_data(self, data, metric_count):
+        """
+        Recursive parsing of the "data" part of the Adobe response.
+        :param data: list of dicts and lists. quite a complicated structure
+        :param metric_count: int, number of metrics in report
+        :return: list of lists
+        """
+        if "breakdown" in data[0]:
+            rows = list()
+            for chunk in data:
+                dim_is_none = "name" not in chunk or chunk["name"] == ""
+                dim_value = np.nan if dim_is_none else chunk["name"]
+                rows += [[dim_value] + row
+                         for row in self._parse_data(chunk["breakdown"], metric_count)]
+            return rows
         else:
-            return data
+            return self._parse_most_granular(data, metric_count)
 
-    def to_dataframe(self):
-        import pandas as pd
+    def _parse_most_granular(self, data, metric_count):
+        """
+        Parsing of the most granular part of the response.
+        It is different depending on if there's a granularity breakdown or not
+        :param data: dict
+        :param metric_count: int, number of metrics in report
+        :return: list of lists
+        """
+        rows = list()
+        for chunk in data:
+            dim_name = chunk["name"] if chunk["name"] != "" else np.nan
+            # data alignment is a bit different if adding granularity breakdowns
+            part_rows = [(val if val != "" else np.nan) for val in chunk["counts"]]
+            if len(chunk["counts"]) > metric_count:
+                part_rows = self.chunks(part_rows, step_size=metric_count+1)
+            else:
+                part_rows = [part_rows]
+            rows += [[dim_name]+part_row for part_row in part_rows]
+        return rows
 
-        if self.data is not None:
-            return pd.DataFrame.from_dict(self.data)
-        return None
+    @staticmethod
+    def chunks(data, step_size):
+        """Yield successive n-sized chunks from l."""
+        return [data[i:i + step_size] for i in range(0, len(data), step_size)]
