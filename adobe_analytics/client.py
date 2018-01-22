@@ -8,9 +8,6 @@ from datetime import datetime
 from adobe_analytics.suite import Suite
 
 
-DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
-
-
 class Client(object):
     DEFAULT_ENDPOINT = 'https://api.omniture.com/admin/1.4/rest/'
 
@@ -29,8 +26,12 @@ class Client(object):
 
     def report_suites(self):
         response = self.request('Company', 'GetReportSuites')
-        suites = [Suite._from_dict(suite, self) for suite in response['report_suites']]
+        suites = [self._suite_from_dict(suite, self) for suite in response['report_suites']]
         return {suite.id: suite for suite in suites}
+
+    @staticmethod
+    def _suite_from_dict(suite_dict, client):
+        return Suite(name=suite_dict['site_title'], suite_id=suite_dict['rsid'], client=client)
 
     def request(self, api, method, data=None):
         """ Compare with https://marketing.adobe.com/developer/api-explorer """

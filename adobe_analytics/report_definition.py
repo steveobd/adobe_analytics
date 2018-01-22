@@ -20,6 +20,45 @@ class ReportDefinition:
         self.granularity = granularity
         self.kwargs = kwargs
 
+    def as_dict(self):
+        report_definition = self._base_definition()
+        report_definition = self._inject_optional_fields(report_definition)
+        return report_definition
+
+    def _base_definition(self):
+        report_definition = {
+            "reportSuiteID": None,  # will be replaced
+            "elements": self._prepare_dimensions(),
+            "metrics": self._prepare_metrics(),
+            "dateFrom": self.date_from,
+            "dateTo": self.date_to
+        }
+        return report_definition
+
+    def _inject_optional_fields(self, report_definition):
+        if self.segments is not None:
+            report_definition["segments"] = self._prepare_segments()
+
+        if self.granularity is not None:
+            self._validate_granularity_input()
+            report_definition["dateGranularity"] = self.granularity
+
+        if self.kwargs:
+            report_definition.update(self.kwargs)
+        return report_definition
+
+    @staticmethod
+    def inject_suite_id(report_definition, suite_id):
+        report_definition = copy.deepcopy(report_definition)  # as dict is mutable
+        report_definition["reportSuiteID"] = suite_id
+        return report_definition
+
+    @staticmethod
+    def assert_dict(report_definition):
+        if isinstance(report_definition, ReportDefinition):
+            return report_definition.as_dict()
+        return report_definition
+
     def _prepare_metrics(self):
         return self._prepare_abstract(variable=self.metrics, name="metrics", func=self._format_id)
 
@@ -31,6 +70,7 @@ class ReportDefinition:
 
     @staticmethod
     def _prepare_abstract(variable, name, func):
+        # TODO: Write docstring
         error_msg = "{} must be str or list.".format(name)
         assert isinstance(variable, (str, list)), error_msg
 
@@ -39,6 +79,7 @@ class ReportDefinition:
         return[func(entry) for entry in variable]
 
     def _clean_dimension(self, dimension):
+        # TODO: Write docstring
         if isinstance(dimension, str):
             return self._format_id(dimension)
         elif isinstance(dimension, dict):
@@ -74,42 +115,3 @@ class ReportDefinition:
 
     def _validate_granularity_input(self):
         assert self.granularity in self.GRANULARITIES, "Granularity must be in: {}.".format(self.GRANULARITIES)
-
-    def as_dict(self):
-        report_definition = self._base_definition()
-        report_definition = self._inject_optional_fields(report_definition)
-        return report_definition
-
-    def _base_definition(self):
-        report_definition = {
-            "reportSuiteID": None,  # will be replaced
-            "elements": self._prepare_dimensions(),
-            "metrics": self._prepare_metrics(),
-            "dateFrom": self.date_from,
-            "dateTo": self.date_to
-        }
-        return report_definition
-
-    def _inject_optional_fields(self, report_definition):
-        if self.segments is not None:
-            report_definition["segments"] = self._prepare_segments()
-
-        if self.granularity is not None:
-            self._validate_granularity_input()
-            report_definition["dateGranularity"] = self.granularity
-
-        if self.kwargs:
-            report_definition.update(self.kwargs)
-        return report_definition
-
-    @staticmethod
-    def inject_suite_id(report_definition, suite_id):
-        report_definition = copy.deepcopy(report_definition)
-        report_definition["reportSuiteID"] = suite_id
-        return report_definition
-
-    @staticmethod
-    def assert_dict(report_definition):
-        if isinstance(report_definition, ReportDefinition):
-            return report_definition.as_dict()
-        return report_definition

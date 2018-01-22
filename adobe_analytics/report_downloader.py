@@ -12,14 +12,14 @@ class ReportDownloader:
         assert report_definition or report_id
         assert not (report_definition and report_id)
 
-        report = self._initiate_or_queue(report_definition, report_id)
-        print("ReportID:", report.id)
+        report = self._create_report(report_definition, report_id)
+        print("ReportID:", report.id)  # TODO: should be logging
 
         report.raw_response = self.check_until_ready(report)
         report.parse()
         return report
 
-    def _initiate_or_queue(self, report_definition, report_id):
+    def _create_report(self, report_definition, report_id):
         if report_definition:
             report_definition = ReportDefinition.assert_dict(report_definition)
             report_id = self.queue(report_definition)

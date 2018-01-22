@@ -1,7 +1,7 @@
 # for code
 requests==2.18.4
 six==1.11.0
-python-dateutil==2.6.1
+more-itertools=4.1.0
 numpy==1.14.0
 pandas==0.22.0
 

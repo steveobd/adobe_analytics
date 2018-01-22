@@ -15,15 +15,12 @@ class Suite(object):
         self._downloader = ReportDownloader(self)
 
     def download_report(self, definition=None, report_id=None):
+        # TODO: Should accept a Report object as well
         return self._downloader.download(definition, report_id)
 
     def queue_report(self, definition):
         report_id = self._downloader.queue(definition)
         return Report(report_id=report_id)
-
-    @classmethod
-    def _from_dict(cls, suite, client):
-        return cls(name=suite['site_title'], suite_id=suite['rsid'], client=client)
 
     @functools.lru_cache(maxsize=None)
     def metrics(self):
