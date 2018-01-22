@@ -1,26 +1,12 @@
 import pandas as pd
 import numpy as np
 
-from adobe_analytics.report_definition import ReportDefinition
-
 
 class Report:
-    def __init__(self, definition=None, report_id=None):
-        assert definition or report_id, "Provide either report_definition or report_id."
-        if definition is not None:
-            assert "reportSuiteID" in definition, "Must provide report suite id."
-
-        self.definition = definition  # used by ReportDownloader. Q: Really necessary here?
+    def __init__(self, report_id):
         self.id = report_id
         self.raw_response = None
-
         self.dataframe = None
-
-    @classmethod
-    def from_universal_definition_and_suite(cls, definition, suite):
-        report_definition = ReportDefinition.assert_dict(definition)
-        report_definition["reportSuiteID"] = suite.id
-        return Report(definition=report_definition)
 
     def parse(self):
         assert self.raw_response is not None, "Download report data first."

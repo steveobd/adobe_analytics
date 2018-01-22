@@ -1,4 +1,4 @@
-from tests import fix_client, test_suite_id  # fix_client is used is used
+from tests import fix_client, test_suite_id  # import is used
 
 
 def test_metrics_is_dict(fix_client):

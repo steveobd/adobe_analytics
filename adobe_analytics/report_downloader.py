@@ -1,25 +1,35 @@
 import time
 
+from adobe_analytics.report import Report
+from adobe_analytics.report_definition import ReportDefinition
+
 
 class ReportDownloader:
     def __init__(self, suite):
         self.suite = suite
 
-    def validate(self, report):
+    def download(self, report_definition=None, report_id=None):
+        assert report_definition or report_id
+        assert not (report_definition and report_id)
+
+        report = self._initiate_or_queue(report_definition, report_id)
+        print("ReportID:", report.id)
+
+        report.raw_response = self.check_until_ready(report)
+        report.parse()
+        return report
+
+    def _initiate_or_queue(self, report_definition, report_id):
+        if report_definition:
+            report_definition = ReportDefinition.assert_dict(report_definition)
+            report_id = self.queue(report_definition)
+        return Report(report_id=report_id)
+
+    def queue(self, report_definition):
         client = self.suite.client
 
-        request_data = self._build_request_data_definition(report)
-        response = client.request(
-            api="Report",
-            method="Validate",
-            data=request_data
-        )
-        return "valid" in response
-
-    def queue(self, report):
-        client = self.suite.client
-
-        request_data = self._build_request_data_definition(report)
+        report_definition = ReportDefinition.inject_suite_id(report_definition, self.suite.id)
+        request_data = self._build_request_data_definition(report_definition)
         response = client.request(
             api="Report",
             method="Queue",
@@ -60,8 +70,9 @@ class ReportDownloader:
         return response
 
     @staticmethod
-    def _build_request_data_definition(report):
-        return {'reportDescription': report.definition}
+    def _build_request_data_definition(report_definition):
+        assert report_definition["reportSuiteID"] is not None
+        return {'reportDescription': report_definition}
 
     @staticmethod
     def _build_request_data_id(report):
