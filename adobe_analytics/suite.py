@@ -14,8 +14,11 @@ class Suite(object):
         self.client = client
         self._downloader = ReportDownloader(self)
 
-    def download_report(self, definition=None, report_id=None):
-        return self._downloader.download(definition, report_id)
+    def download_report(self, obj):
+        """
+        :param obj: Report, ReportDefinition, dict, int or float
+        """
+        return self._downloader.download(obj)
 
     def queue_report(self, definition):
         report_id = self._downloader.queue(definition)

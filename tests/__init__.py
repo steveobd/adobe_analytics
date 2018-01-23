@@ -1,5 +1,4 @@
 from adobe_analytics import base_dir
-from adobe_analytics import Client
 import pytest
 import requests_mock
 
@@ -11,10 +10,12 @@ test_suite_id = "omniture.api-gateway"
 
 @pytest.fixture(scope="module")
 def fix_client():
+    from adobe_analytics import Client
+
     with requests_mock.mock() as m:
         initiate_base_mock_responses(mock_context=m)
 
-        credentials_path = mock_dir+"/login_dummy.json"
+        credentials_path = mock_dir+"/login.json"
         client = Client.from_json(file_path=credentials_path)
 
         # results of the following method calls are cached
@@ -42,3 +43,16 @@ def initiate_base_mock_responses(mock_context):
 
             test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method='+method
             mock_context.post(test_endpoint, text=response)
+
+
+@pytest.fixture()
+def fix_report_definition():
+    from adobe_analytics.report_definition import ReportDefinition
+
+    definition = ReportDefinition(
+        metrics="pageviews",
+        dimensions="page",
+        date_from="2017-01-01",
+        date_to="2017-12-31"
+    )
+    return definition

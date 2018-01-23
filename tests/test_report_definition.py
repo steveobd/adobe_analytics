@@ -1,5 +1,7 @@
 import pytest
 
+from tests import fix_report_definition  # import is used
+
 
 def test_init_dimensions_as_list():
     from adobe_analytics.report_definition import ReportDefinition
@@ -221,15 +223,10 @@ def test_with_sort_by():
     assert definition.to_dict() == expected_result
 
 
-def test_inject_suite_id():
+def test_inject_suite_id(fix_report_definition):
     from adobe_analytics.report_definition import ReportDefinition
 
-    definition = ReportDefinition(
-        metrics="pageviews",
-        dimensions="page",
-        last_days=7
-    )
-    definition = ReportDefinition.inject_suite_id(definition, "my_suite_id")
+    definition = ReportDefinition.inject_suite_id(fix_report_definition, "my_suite_id")
     assert definition["reportSuiteID"] == "my_suite_id"
 
 
@@ -240,15 +237,10 @@ def test_assert_dict_with_dict():
     assert obj == ReportDefinition.assert_dict(obj)
 
 
-def test_assert_dict_with_definition():
+def test_assert_dict_with_definition(fix_report_definition):
     from adobe_analytics.report_definition import ReportDefinition
 
-    definition = ReportDefinition(
-        metrics="pageviews",
-        dimensions="page",
-        last_days=7
-    )
-    assert definition.to_dict() == ReportDefinition.assert_dict(definition)
+    assert fix_report_definition.to_dict() == ReportDefinition.assert_dict(fix_report_definition)
 
 
 def test_granulairty_positive():
