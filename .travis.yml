@@ -7,4 +7,4 @@ install:
 script:
     - py.test --cov=./
 after_success:
-    - codecov
+    - codecov --token=b06d398b-b5a4-435d-8107-5bde2ee975d8
