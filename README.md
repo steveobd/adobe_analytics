@@ -110,13 +110,11 @@ and introducing higher code quality standards. While doing this I removed some f
 some of which I will bring back later.
 
 Here's a small overview of features I will work on next:
-- reviving test suite to ensure stability and flexibility
-- distribute to pip
 - data warehouse support (the parser does it already, but I need some extra logic for multi-page requests)
 - error handling
 - revive logging
-- ensure python2.7 support
-- easy interface for classification uploads
+- revive python2.7 support
+- maybe an easy interface for classification uploads
 
 #### Tests
 I am migrating the testing suite to [py.test](https://github.com/pytest-dev/pytest) right now. Execute them in
