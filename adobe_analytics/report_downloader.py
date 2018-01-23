@@ -24,10 +24,9 @@ class ReportDownloader:
             return obj
         elif isinstance(obj, (ReportDefinition, dict)):
             report_definition = ReportDefinition.assert_dict(obj)
-            report_id = self.queue(report_definition)
+            return self.queue(report_definition)
         else:
-            report_id = obj
-        return Report(report_id=report_id)
+            return Report(report_id=obj)
 
     def queue(self, report_definition):
         client = self.suite.client
@@ -39,7 +38,8 @@ class ReportDownloader:
             method="Queue",
             data=request_data
         )
-        return response["reportID"]
+        report_id = response["reportID"]
+        return Report(report_id)
 
     def check_until_ready(self, report):
         for poll_attempt in itertools.count():

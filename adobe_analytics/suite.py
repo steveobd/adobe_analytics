@@ -4,7 +4,6 @@ from __future__ import print_function
 import functools
 
 from adobe_analytics.report_downloader import ReportDownloader
-from adobe_analytics.report import Report
 
 
 class Suite(object):
@@ -14,15 +13,12 @@ class Suite(object):
         self.client = client
         self._downloader = ReportDownloader(self)
 
-    def download_report(self, obj):
-        """
-        :param obj: Report, ReportDefinition, dict, int or float
-        """
+    def download(self, obj):
+        """ obj can be Report, ReportDefinition, dict, int or float """
         return self._downloader.download(obj)
 
-    def queue_report(self, definition):
-        report_id = self._downloader.queue(definition)
-        return Report(report_id=report_id)
+    def queue(self, definition):
+        return self._downloader.queue(definition)
 
     @functools.lru_cache(maxsize=None)
     def metrics(self):

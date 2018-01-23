@@ -1,4 +1,7 @@
-from tests import fix_client, fix_suite  # import is used
+import requests_mock
+
+from tests import fix_client, fix_suite, fix_report_definition, fix_report_downloader, fix_report  # import is used
+from tests import add_mock_request_queue, add_mock_request_get_success
 
 
 def test_response_to_dict():
@@ -35,3 +38,20 @@ def test_elements_is_dict(fix_suite):
 
 def test_segments_is_dict(fix_suite):
     assert isinstance(fix_suite.segments(), dict)
+
+
+def test_download(fix_suite, fix_report):
+    with requests_mock.mock() as mock_context:
+        add_mock_request_queue(mock_context)
+        add_mock_request_get_success(mock_context)
+
+        report = fix_suite.download(fix_report)
+        assert report.dataframe is not None
+
+
+def test_queue(fix_report_definition, fix_report_downloader):
+    with requests_mock.mock() as mock_context:
+        add_mock_request_queue(mock_context)
+
+        report = fix_report_downloader.queue(fix_report_definition)
+        assert report.id == 123
