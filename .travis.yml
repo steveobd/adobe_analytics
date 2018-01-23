@@ -5,6 +5,6 @@ install:
     - pip install pytest-cov
     - pip install -r requirements.txt
 script:
-    - py.test --cov=./
+    - py.test --cov=adobe_analytics
 after_success:
     - codecov --token=b06d398b-b5a4-435d-8107-5bde2ee975d8
