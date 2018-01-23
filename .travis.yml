@@ -6,6 +6,6 @@ install:
     - pip install codecov
     - pip install -r requirements.txt
 script:
-    - ptest --cov=./
+    - pytest --cov=./
 after_success:
     - codecov
