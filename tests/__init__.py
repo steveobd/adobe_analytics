@@ -8,7 +8,7 @@ mock_dir = test_dir+"/mock_objects"
 test_suite_id = "omniture.api-gateway"
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def fix_client():
     from adobe_analytics import Client
 
@@ -25,6 +25,11 @@ def fix_client():
         suite.dimensions()
         suite.segments()
         return client
+
+
+@pytest.fixture(scope="session")
+def fix_suite(fix_client):
+    return fix_client.suites()[test_suite_id]
 
 
 def initiate_base_mock_responses(mock_context):
@@ -45,7 +50,7 @@ def initiate_base_mock_responses(mock_context):
             mock_context.post(test_endpoint, text=response)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def fix_report_definition():
     from adobe_analytics.report_definition import ReportDefinition
 

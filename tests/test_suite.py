@@ -1,5 +1,4 @@
-from tests import fix_client  # import is used
-from tests import test_suite_id
+from tests import fix_client, fix_suite  # import is used
 
 
 def test_response_to_dict():
@@ -26,16 +25,13 @@ def test_response_to_dict():
     assert result == expected_result
 
 
-def test_metrics_is_dict(fix_client):
-    fix_suite = fix_client.suites()[test_suite_id]
+def test_metrics_is_dict(fix_suite):
     assert isinstance(fix_suite.metrics(), dict)
 
 
-def test_elements_is_dict(fix_client):
-    fix_suite = fix_client.suites()[test_suite_id]
+def test_elements_is_dict(fix_suite):
     assert isinstance(fix_suite.dimensions(), dict)
 
 
-def test_segments_is_dict(fix_client):
-    fix_suite = fix_client.suites()[test_suite_id]
+def test_segments_is_dict(fix_suite):
     assert isinstance(fix_suite.segments(), dict)
