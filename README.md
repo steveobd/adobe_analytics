@@ -10,9 +10,9 @@ to many of the common reporting queries, and allows you to do construct other qu
 closer to the metal.
 
 ## Installation
-Through PyPI (not working yet, will be added beginning of Feb 2018):
+Through PyPI:
 
-    pip install py_adobbe_analytics
+    pip install adobbe_analytics
 
 Please use pip+git in the meantime:
 
@@ -48,11 +48,12 @@ client = Client.from_json("my_path")
 ## Account and suites
 
 You can very easily access some basic information about your account and your
-reporting suites:
+reporting suites (note that the result of those methods is cached, i.e. they
+are available without additional API calls after the first execution):
 
 ```python
-print(client.suites)
-suite = client.suites['report_suite_id']
+print(client.suites())
+suite = client.suites()['report_suite_id']
 print(suite)
 print(suite.metrics())
 print(suite.elements())
@@ -71,7 +72,7 @@ report_def = ReportDefinition(
     metrics="pageviews",
     last_days=1
 )
-report = suite.download_report(definition=report_def)
+report = suite.download(report_def)
 ```
 This will generate the report definition, run the report, download and parse it for you. Alternatively you can also 
 just queue the report and download it later (-> async reporting). The report definition object is very versatile as
