@@ -82,9 +82,10 @@ class ReportDownloader:
 
     @staticmethod
     def _build_request_data_definition(report_definition):
+        report_definition = ReportDefinition.assert_dict(report_definition)
         assert report_definition["reportSuiteID"] is not None
-        return {'reportDescription': report_definition}
+        return {"reportDescription": report_definition}
 
     @staticmethod
     def _build_request_data_id(report):
-        return {'reportID': report.id}
+        return {"reportID": report.id}

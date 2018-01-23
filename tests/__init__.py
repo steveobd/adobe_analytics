@@ -32,6 +32,31 @@ def fix_suite(fix_client):
     return fix_client.suites()[test_suite_id]
 
 
+@pytest.fixture(scope="session")
+def fix_report_downloader(fix_suite):
+    from adobe_analytics.report_downloader import ReportDownloader
+    return ReportDownloader(fix_suite)
+
+
+@pytest.fixture(scope="session")
+def fix_report():
+    from adobe_analytics.report import Report
+    return Report(123)
+
+
+@pytest.fixture(scope="session")
+def fix_report_definition():
+    from adobe_analytics.report_definition import ReportDefinition
+
+    definition = ReportDefinition(
+        metrics="pageviews",
+        dimensions="page",
+        date_from="2017-01-01",
+        date_to="2017-12-31"
+    )
+    return definition
+
+
 def initiate_base_mock_responses(mock_context):
     base_methods = [
         "Company.GetReportSuites",
@@ -48,16 +73,3 @@ def initiate_base_mock_responses(mock_context):
 
             test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method='+method
             mock_context.post(test_endpoint, text=response)
-
-
-@pytest.fixture(scope="session")
-def fix_report_definition():
-    from adobe_analytics.report_definition import ReportDefinition
-
-    definition = ReportDefinition(
-        metrics="pageviews",
-        dimensions="page",
-        date_from="2017-01-01",
-        date_to="2017-12-31"
-    )
-    return definition

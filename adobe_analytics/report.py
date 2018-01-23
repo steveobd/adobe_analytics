@@ -5,7 +5,7 @@ import more_itertools
 
 class Report:
     def __init__(self, report_id):
-        self.id = report_id
+        self.id = int(report_id)
         self.raw_response = None
         self.dataframe = None
 
