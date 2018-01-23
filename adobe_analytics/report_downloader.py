@@ -9,19 +9,24 @@ class ReportDownloader:
     def __init__(self, suite):
         self.suite = suite
 
-    def download(self, report_definition=None, report_id=None):
-        assert report_definition or report_id
-        assert not (report_definition and report_id)
-
-        report = self._create_report(report_definition, report_id)
+    def download(self, report_definition=None, report_id=None, report=None):
+        self._validate_input(report_definition, report_id, report)
+        report = self._to_report(report_definition, report_id, report)
         print("ReportID:", report.id)  # TODO: should be logging
 
         report.raw_response = self.check_until_ready(report)
         report.parse()
         return report
 
-    def _create_report(self, report_definition, report_id):
-        if report_definition:
+    @staticmethod
+    def _validate_input(report_definition, report_id, report):
+        assert report_definition or report_id or report
+        assert sum([bool(item) for item in (report_definition, report_id, report)]) == 1
+
+    def _to_report(self, report_definition, report_id, report):
+        if report:
+            return report
+        elif report_definition:
             report_definition = ReportDefinition.assert_dict(report_definition)
             report_id = self.queue(report_definition)
         return Report(report_id=report_id)

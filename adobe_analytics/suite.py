@@ -15,7 +15,6 @@ class Suite(object):
         self._downloader = ReportDownloader(self)
 
     def download_report(self, definition=None, report_id=None):
-        # TODO: Should accept a Report object as well
         return self._downloader.download(definition, report_id)
 
     def queue_report(self, definition):
