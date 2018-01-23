@@ -9,7 +9,7 @@ mock_dir = test_dir+"/mock_objects"
 test_suite_id = "omniture.api-gateway"
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def fix_client():
     with requests_mock.mock() as m:
         initiate_base_mock_responses(mock_context=m)
