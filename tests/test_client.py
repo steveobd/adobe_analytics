@@ -19,7 +19,7 @@ def test_suites_is_dict(fix_client):
 def test_suite_is_suite(fix_client):
     from adobe_analytics.suite import Suite
 
-    fix_suite = fix_client.suites[test_suite_id]
+    fix_suite = fix_client.suites()[test_suite_id]
     assert isinstance(fix_suite, Suite)
 
 
@@ -27,5 +27,16 @@ def test_request_without_auth(fix_client):
     import re
 
     pattern = r"https://api\d?.omniture.com/admin/1.4/rest/"
-    response = fix_client.request(api="Company", method="GetEndpoint")
+    response = fix_client.request(api="Company", method="GetEndpoint", data={"company": "clearly"})
     assert re.match(pattern, response)
+
+
+def test_serialize_header(fix_client):
+    properties = {"a": "yo1", "b": "yo2"}
+    result = fix_client._serialize_header(properties)
+    assert result == 'a="yo1", b="yo2"'
+
+
+def test_client_representation(fix_client):
+    result = fix_client.__repr__()
+    assert result == "User: my_username | Endpoint: https://api.omniture.com/admin/1.4/rest/"

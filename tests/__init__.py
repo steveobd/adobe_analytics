@@ -1,4 +1,4 @@
-from adobe_analytics import base_dir, credentials_path
+from adobe_analytics import base_dir
 from adobe_analytics import Client
 import pytest
 import requests_mock
@@ -14,11 +14,15 @@ def fix_client():
     with requests_mock.mock() as m:
         initiate_base_mock_responses(mock_context=m)
 
-        # results are cached
+        credentials_path = mock_dir+"/login_dummy.json"
         client = Client.from_json(file_path=credentials_path)
-        client.suites[test_suite_id].metrics()
-        client.suites[test_suite_id].dimensions()
-        client.suites[test_suite_id].segments()
+
+        # results of the following method calls are cached
+        # and used in further tests
+        suite = client.suites()[test_suite_id]
+        suite.metrics()
+        suite.dimensions()
+        suite.segments()
         return client
 
 

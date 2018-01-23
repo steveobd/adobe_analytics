@@ -10,7 +10,7 @@ from adobe_analytics.suite import Suite
 
 
 class Client(object):
-    DEFAULT_ENDPOINT = 'https://api.omniture.com/admin/1.4/rest/'
+    DEFAULT_ENDPOINT = "https://api.omniture.com/admin/1.4/rest/"
 
     def __init__(self, username, password, endpoint=DEFAULT_ENDPOINT):
         self.username = username
@@ -25,13 +25,13 @@ class Client(object):
 
     @functools.lru_cache(maxsize=None)
     def suites(self):
-        response = self.request('Company', 'GetReportSuites')
-        suites = [self._suite_from_dict(suite, self) for suite in response['report_suites']]
+        response = self.request("Company", "GetReportSuites")
+        suites = [self._suite_from_dict(suite, self) for suite in response["report_suites"]]
         return {suite.id: suite for suite in suites}
 
     @staticmethod
     def _suite_from_dict(suite_dict, client):
-        return Suite(name=suite_dict['site_title'], suite_id=suite_dict['rsid'], client=client)
+        return Suite(name=suite_dict["site_title"], suite_id=suite_dict["rsid"], client=client)
 
     def request(self, api, method, data=None):
         """ Compare with https://marketing.adobe.com/developer/api-explorer """
@@ -63,10 +63,10 @@ class Client(object):
         header = 'UsernameToken ' + self._serialize_header(properties)
         return {'X-WSSE': header}
 
-    def __repr__(self):
-        return "User: {0}\nEndpoint: {1}".format(self.username, self.endpoint)
-
     @staticmethod
     def _serialize_header(properties):
         header = ['{key}="{value}"'.format(key=k, value=v) for k, v in properties.items()]
         return ', '.join(header)
+
+    def __repr__(self):
+        return "User: {0} | Endpoint: {1}".format(self.username, self.endpoint)
