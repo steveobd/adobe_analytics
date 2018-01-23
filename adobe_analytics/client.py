@@ -3,6 +3,7 @@ import binascii
 import uuid
 import hashlib
 import json
+import functools
 from datetime import datetime
 
 from adobe_analytics.suite import Suite
@@ -16,15 +17,14 @@ class Client(object):
         self.password = password
         self.endpoint = endpoint
 
-        self.suites = self.report_suites()
-
     @classmethod
     def from_json(cls, file_path):
         with open(file_path, mode="r") as json_file:
             credentials = json.load(json_file)
         return cls(credentials["username"], credentials["password"])
 
-    def report_suites(self):
+    @functools.lru_cache(maxsize=None)
+    def suites(self):
         response = self.request('Company', 'GetReportSuites')
         suites = [self._suite_from_dict(suite, self) for suite in response['report_suites']]
         return {suite.id: suite for suite in suites}
@@ -64,8 +64,7 @@ class Client(object):
         return {'X-WSSE': header}
 
     def __repr__(self):
-        return "User: {0}\nReport Suites: {1}\nEndpoint: {2}"\
-                .format(self.username, len(self.suites), self.endpoint)
+        return "User: {0}\nEndpoint: {1}".format(self.username, self.endpoint)
 
     @staticmethod
     def _serialize_header(properties):
