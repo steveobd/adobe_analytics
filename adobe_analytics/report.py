@@ -11,7 +11,7 @@ class Report:
 
     def parse(self):
         assert self.raw_response is not None, "Download report data first."
-        raw_data = self.raw_response['report']["data"]
+        raw_data = self.raw_response["report"]["data"]
 
         dimensions, metrics = self._parse_header()
         data = self._parse_data(raw_data, metric_count=len(metrics))
@@ -20,7 +20,7 @@ class Report:
         self.dataframe = pd.DataFrame(data, columns=header)
 
     def _parse_header(self):
-        report = self.raw_response['report']
+        report = self.raw_response["report"]
 
         dimensions = [self._classification_or_name(dimension) for dimension in report["elements"]]
         metrics = [metric["name"] for metric in report["metrics"]]
@@ -78,3 +78,12 @@ class Report:
         if len(header) != len(data[0]):  # can only be when granularity breakdown is used
             return ["Granularity"] + header
         return header
+
+
+if __name__ == '__main__':
+    print(type(response))
+
+    report = Report(123)
+    report.raw_response = response
+    report.parse()
+    print(report.dataframe)

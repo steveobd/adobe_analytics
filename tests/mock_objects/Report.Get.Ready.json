@@ -1,0 +1,32 @@
+{
+    "report": {
+        "data": [{
+            "breakdown": [
+                {"counts": ["209726", "0"], "name": ""},
+                {"counts": ["2", "2"], "name": "page1"},
+                {"counts": ["2", "2"], "name": "page2"},
+                {"counts": ["4", "8"], "name": "page3"}
+            ]
+        }, {
+            "name": "11911",
+            "breakdown": [
+                {"counts": ["1", "1"], "name": "page4"},
+                {"counts": ["4", "5"], "name": "page5"}
+            ]
+
+        }, {
+            "name": "12900",
+            "breakdown": [{
+                "counts": ["1", "1"], "name": "page6"
+            }]
+        }],
+        "metrics": [
+            {"decimals": 0, "id": "visits", "name": "Visits", "type": "number"},
+            {"decimals": 0, "id": "pageviews", "name": "Page Views", "type": "number"}
+        ],
+        "elements": [
+            {"id": "product", "name": "Unit ID", "classification": "Unit Name"},
+            {"id": "page", "name": "Page"}
+        ]
+    }
+}

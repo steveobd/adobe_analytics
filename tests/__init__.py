@@ -8,14 +8,14 @@ mock_dir = test_dir+"/mock_objects"
 test_suite_id = "omniture.api-gateway"
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def fix_client():
     from adobe_analytics import Client
 
     with requests_mock.mock() as m:
         initiate_base_mock_responses(mock_context=m)
 
-        credentials_path = mock_dir+"/login.json"
+        credentials_path = mock_dir+"/_login.json"
         client = Client.from_json(file_path=credentials_path)
 
         # results of the following method calls are cached
@@ -27,24 +27,24 @@ def fix_client():
         return client
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def fix_suite(fix_client):
     return fix_client.suites()[test_suite_id]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def fix_report_downloader(fix_suite):
     from adobe_analytics.report_downloader import ReportDownloader
     return ReportDownloader(fix_suite)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def fix_report():
     from adobe_analytics.report import Report
     return Report(123)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def fix_report_definition():
     from adobe_analytics.report_definition import ReportDefinition
 

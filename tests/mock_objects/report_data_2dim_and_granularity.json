@@ -1,0 +1,42 @@
+[{
+    "name": "Week 35, 2017",
+    "breakdown": [{
+        "name": "",
+        "counts": [
+            "", "102095", "24932"
+        ]
+    }, {
+        "name": "product1",
+        "counts": [
+            "page1", "1", "1",
+            "page2", "2", "2"
+        ]
+    }, {
+        "name": "product2",
+        "counts": [
+            "page3", "2430", "1535",
+            "page4", "2741", "1701"
+        ]
+    }]
+}, {
+    "name": "Week 36, 2017",
+    "breakdown": [{
+        "name": "",
+        "counts": [
+            "", "402268", "105046"
+        ]
+    }, {
+        "name": "product1",
+        "counts": [
+            "page5", "12", "12",
+            "page6", "2", "2",
+            "page7", "8", "7"
+        ]
+    }, {
+        "name": "product2",
+        "counts": [
+            "page8", "9717", "6239",
+            "page9", "10550", "6799"
+        ]
+    }]
+}]

@@ -1,6 +1,5 @@
 {"report_suites":
   [
-    {"rsid": "omniture.api-gateway", "site_title": "test_suite"},
-    {"rsid": "testdev", "site_title": "Dev Suite"}
+    {"rsid": "omniture.api-gateway", "site_title": "test_suite"}
   ]
 }
