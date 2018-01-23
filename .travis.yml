@@ -1,11 +1,12 @@
 language: python
 python:
-    - "3.5"
     - "3.6"
 install:
     - pip install codecov
     - pip install -r requirements.txt
 script:
-    - pytest --cov=./
+    - pytest
 after_success:
+    - coverage report -m
+    - bash <(curl -s https://codecov.io/bash)
     - codecov
