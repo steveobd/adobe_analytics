@@ -1,6 +1,5 @@
 [run]
 branch = True
-source = adobe_analytics
 
 [report]
 exclude_lines =

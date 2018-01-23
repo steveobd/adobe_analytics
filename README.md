@@ -14,15 +14,15 @@ Through PyPI:
 
     pip install adobbe_analytics
 
-Please use pip+git in the meantime:
+or via git:
 
     pip install git+http://github.com/SaturnFromTitan/adobe_analytics.git
 
-I developed everything in Python 3.6.0 and didn't check compatability with other versions yet.
+Currently only Python 3 is supported.
 
 ## Authentication
 
-The most straightforward way to authenticate is with:
+To authenticate use the `Client` object as follows:
 
 ```python
 from adobe_analytics import Client
@@ -49,7 +49,7 @@ client = Client.from_json("my_path")
 
 You can very easily access some basic information about your account and your
 reporting suites (note that the result of those methods is cached, i.e. they
-are available without additional API calls after the first execution):
+are available without additional API calls after first execution):
 
 ```python
 print(client.suites())
@@ -76,18 +76,28 @@ report = suite.download(report_def)
 ```
 This will generate the report definition, run the report, download and parse it for you. Alternatively you can also 
 just queue the report and download it later (-> async reporting). The report definition object is very versatile as
-it supports **kwargs arguments. Therefore you can specify every field that is listed in the [official Adobe Analytics](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-reportdescription-1#reference_9ECD594AEDD240D7A475868824079F06)
-documentation and supported by the REST API. However, you can also just pass a dictionary to download_report.
+it supports the **kwargs argument. Therefore you can specify every field that is listed in the [official Adobe Analytics](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-reportdescription-1#reference_9ECD594AEDD240D7A475868824079F06)
+documentation and supported by the REST API. In case you don't want to use the ReportDefinition class, you can also
+just pass a well-formatted dictionary to `suite.download()`, however, ReportDefinition is the recommended way.
+Note that the function also accepts queued reports as input for asynchronous reporting.  
 
 The fields for dimensions, metrics and segments should be lists of strings representing the ids. However, string inputs
 for singular values are also supported. For a full list of available entries, refer to `suite.dimensions()`,
 `suite.metrics()` and `suite.segments()` from above. Like you can see in the [documentation](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-reportdescriptionelement#reference_9ECD594AEDD240D7A475868824079F06)
 there are even more options per dimension available. Make sure to especially check out `top` as you otherwise only
-receive max. 5 entries per dimension in your report.   
+receive max. 5 entries per dimension in your report.
+
+To download classifciation reports, you need to specify the a dictionaries like:
+```python
+dimensions = [{
+    "id": "product",
+    "classification": "Product Name"
+}]
+```
 
 ## Using the Results of a report
 Reports are returned as [pandas](https://github.com/pandas-dev/pandas).DataFrame. Reports as pure python, i.e. as
-nested lists, are currently not supported. If that's a requirement for you, feel free to file an issue or pull request.
+nested lists, are currently not supported. Let me know if that's a requirement for you or file a pull request. 
 
 ### Running multiple reports
 If you're interested in automating a large number of reports, you can speed up the execution by first queueing all
@@ -130,4 +140,3 @@ seems to be abandoned. Thanks to everyone who put work into this project!
 Special thanks go to
 - [debrouwere](https://github.com/debrouwere) for initiating the framework
 - [dancingcactus](https://github.com/dancingcactus) for major improvements when taking it over from debrouwere
-  
