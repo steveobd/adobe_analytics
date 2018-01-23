@@ -1,13 +1,6 @@
 # Adobe Analytics
-
-## !Caution!
-Hi all,
-glad you find this framework. I'm refactoring and redesigning the package right now. The described functionality
-below should work meanwhile. However, most of the test suite is currently broken or isn't yet adapted to the new
-concepts introduced by me.
-
-I will ensure stability and add some features in the coming days and weeks. Let me know if you find bugs/problems
-(Martin, 2018-01-22).
+[![Build Status](https://travis-ci.org/SaturnFromTitan/adobe_analytics.svg?branch=master)](https://travis-ci.org/SaturnFromTitan/adobe_analytics)
+[![codecov](https://codecov.io/gh/SaturnFromTitan/adobe_analytics/branch/master/graph/badge.svg)](https://codecov.io/gh/SaturnFromTitan/adobe_analytics)
 
 ## Description
 `adobe_analytics` is a wrapper around the Adobe Analytics REST API.
