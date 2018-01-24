@@ -1,8 +1,9 @@
-from tests import fix_client, fix_suite, fix_report_downloader, fix_report, fix_report_definition  # import is used
-from tests import mock_dir
-from tests import add_mock_request_queue, add_mock_request_get_success, add_mock_request_get_fail
-import pytest
 import requests_mock
+import pytest
+
+from tests import fix_client, fix_suite, fix_report_downloader, fix_report, fix_report_definition  # import is used
+from tests import (add_mock_request_queue, add_mock_request_get_success,
+                   add_mock_request_get_fail, add_mock_request_cancel_success)
 
 
 def test_init(fix_suite):
@@ -103,3 +104,31 @@ def test_download_with_report(fix_report_downloader, fix_report):
 
         report = fix_report_downloader.download(fix_report)
         assert report.dataframe is not None
+
+
+def test_sleep_interval():
+    from adobe_analytics.report_downloader import ReportDownloader
+
+    assert ReportDownloader._sleep_interval(0) == 5
+    assert ReportDownloader._sleep_interval(1) == 10
+    assert ReportDownloader._sleep_interval(2) == 20
+
+
+def test_check_until_ready(monkeypatch, fix_report_downloader, fix_report):
+    import time
+    monkeypatch.setattr(time, "sleep", lambda x: None)
+
+    with requests_mock.mock() as mock_context:
+        add_mock_request_get_fail(mock_context)
+
+        response = fix_report_downloader.check_until_ready(fix_report, max_attempts=2)
+        assert response is None
+
+
+def test_cancel(fix_report_downloader, fix_report):
+    with requests_mock.mock() as mock_context:
+        add_mock_request_cancel_success(mock_context)
+
+        response = fix_report_downloader.cancel(fix_report)
+        assert isinstance(response, bool)
+        assert response

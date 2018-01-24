@@ -100,3 +100,8 @@ def add_mock_request_get_fail(mock_context):
 
     test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Get'
     mock_context.post(test_endpoint, text=response)
+
+
+def add_mock_request_cancel_success(mock_context):
+    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Cancel'
+    mock_context.post(test_endpoint, text="true")

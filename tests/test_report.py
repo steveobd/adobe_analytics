@@ -6,6 +6,10 @@ from tests import fix_report  # import is used
 from tests import mock_dir
 
 
+def test_representation(fix_report):
+    assert fix_report.__repr__() == "Report: 123"
+
+
 def test_classification_or_name_with_classification():
     from adobe_analytics.report import Report
 

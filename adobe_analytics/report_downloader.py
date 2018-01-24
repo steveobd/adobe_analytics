@@ -40,19 +40,23 @@ class ReportDownloader:
         print("ReportID:", report_id)  # TODO: should be logging
         return Report(report_id)
 
-    def check_until_ready(self, report):
-        for poll_attempt in itertools.count():
+    def check_until_ready(self, report, max_attempts=-1):
+        """ max_attemps is only designed for easier testing """
+        counter = itertools.count() if max_attempts == -1 else range(max_attempts)
+
+        for poll_attempt in counter:
             response = self.check(report)
             if response is not None:
                 return response
 
-            self._sleep(poll_attempt)
+            interval = self._sleep_interval(poll_attempt)
+            time.sleep(interval)
+        return None
 
     @staticmethod
-    def _sleep(poll_attempt):
+    def _sleep_interval(poll_attempt):
         exponential = 5 * 2**poll_attempt
-        interval = min(exponential, 300)  # max 5 min sleep
-        time.sleep(interval)
+        return min(exponential, 300)  # max 5 min sleep
 
     def check(self, report):
         client = self.suite.client
