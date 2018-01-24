@@ -103,15 +103,5 @@ class Report:
             return ["Granularity"] + header
         return header
 
-
-if __name__ == '__main__':
-    from tests import mock_dir
-    import json
-    import pprint
-
-    file_path = mock_dir + "/report_data_1dim_and_granularity.json"
-    with open(file_path, mode="r") as json_file:
-        raw_data = json.load(json_file)
-
-    result = Report(123)._parse_data(raw_data, 2)
-    pprint.pprint(result)
+    def __repr__(self):
+        return "Report: {}".format(self.id)
