@@ -53,7 +53,7 @@ def test_download(fix_suite, fix_report):
         assert report.dataframe is not None
 
 
-def test_queue(fix_report_definition):
+def test_queue(fix_suite, fix_report_definition):
     with requests_mock.mock() as mock_context:
         add_mock_request_queue(mock_context)
 
