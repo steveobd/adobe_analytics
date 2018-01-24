@@ -101,16 +101,3 @@ class Report:
         if len(header) != len(data[0]):  # can only be when granularity breakdown is used
             return ["Granularity"] + header
         return header
-
-
-if __name__ == '__main__':
-    from tests import mock_dir
-    import json
-
-    with open(mock_dir+"/report_response_2dim_and_granularity_missing_values.json") as json_file:
-        response = json.load(json_file)
-
-    report = Report(123)
-    report.raw_response = response
-    report.parse()
-    print(report.dataframe)
