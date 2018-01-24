@@ -55,6 +55,73 @@ def test_fix_header_without_granularity():
     assert result == ["product", "pageviews"]
 
 
+def test_dim_is_nan_no_name():
+    from adobe_analytics.report import Report
+
+    chunk = dict()
+    assert Report._dimension_value_is_nan(chunk)
+
+
+def test_dim_is_nan_empty_name():
+    from adobe_analytics.report import Report
+
+    chunk = {"name": ""}
+    assert Report._dimension_value_is_nan(chunk)
+
+
+def test_dim_is_nan_no_name_classification():
+    from adobe_analytics.report import Report
+
+    chunk = {"name": "::unspecified::"}
+    assert Report._dimension_value_is_nan(chunk)
+
+
+def test_dim_is_nan_false():
+    from adobe_analytics.report import Report
+
+    chunk = {"name": "lasttouchchannel"}
+    assert not Report._dimension_value_is_nan(chunk)
+
+
+def test_parse_datetime():
+    from adobe_analytics.report import Report
+
+    chunk = {
+        "year": 2017,
+        "month": 3,
+        "day": 1,
+        "hour": 5
+    }
+    assert Report._to_datetime(chunk) == "2017-03-01 05:00:00"
+
+
+def test_dimension_value_nan():
+    from adobe_analytics.report import Report
+
+    chunk = dict()
+    assert pd.isnull(Report._dimension_value(chunk))
+
+
+def test_dimension_value_datetime():
+    from adobe_analytics.report import Report
+
+    chunk = {
+        "name": "Mon, 1st March 2017",
+        "year": 2017,
+        "month": 3,
+        "day": 1,
+        "hour": 5
+    }
+    assert Report._dimension_value(chunk) == "2017-03-01 05:00:00"
+
+
+def test_dimension_value_name():
+    from adobe_analytics.report import Report
+
+    chunk = {"name": "Product Name"}
+    assert Report._dimension_value(chunk) == "Product Name"
+
+
 def test_parse_data_1dim(fix_report):
     file_path = mock_dir+"/report_data_1dim.json"
     with open(file_path, mode="r") as json_file:
@@ -89,12 +156,12 @@ def test_parse_data_1dim_and_granularity(fix_report):
         raw_data = json.load(json_file)
 
     result = [
-        ["Week 35, 2017", np.nan, "102095", "24932"],
-        ["Week 35, 2017", "page1", "2430", "1535"],
-        ["Week 35, 2017", "page2", "2741", "1701"],
-        ["Week 36, 2017", np.nan, "402268", "105046"],
-        ["Week 36, 2017", "page1", "9717", "6239"],
-        ["Week 36, 2017", "page3", "10550", "6799"]
+        ["2017-08-28 00:00:00", np.nan, "102095", "24932"],
+        ["2017-08-28 00:00:00", "page1", "2430", "1535"],
+        ["2017-08-28 00:00:00", "page2", "2741", "1701"],
+        ["2017-09-04 00:00:00", np.nan, "402268", "105046"],
+        ["2017-09-04 00:00:00", "page1", "9717", "6239"],
+        ["2017-09-04 00:00:00", "page3", "10550", "6799"]
     ]
     assert fix_report._parse_data(raw_data, 2) == result
 
@@ -105,17 +172,17 @@ def test_parse_data_2dim_and_granularity(fix_report):
         raw_data = json.load(json_file)
 
     result = [
-        ["Week 35, 2017", np.nan, np.nan, "102095", "24932"],
-        ["Week 35, 2017", "product1", "page1", "1", "1"],
-        ["Week 35, 2017", "product1", "page2", "2", "2"],
-        ["Week 35, 2017", "product2", "page3", "2430", "1535"],
-        ["Week 35, 2017", "product2", "page4", "2741", "1701"],
-        ["Week 36, 2017", np.nan, np.nan, "402268", "105046"],
-        ["Week 36, 2017", "product1", "page5", "12", "12"],
-        ["Week 36, 2017", "product1", "page6", "2", "2"],
-        ["Week 36, 2017", "product1", "page7", "8", "7"],
-        ["Week 36, 2017", "product2", "page8", "9717", "6239"],
-        ["Week 36, 2017", "product2", "page9", "10550", "6799"]
+        ["2017-08-28 00:00:00", np.nan, np.nan, "102095", "24932"],
+        ["2017-08-28 00:00:00", "product1", "page1", "1", "1"],
+        ["2017-08-28 00:00:00", "product1", "page2", "2", "2"],
+        ["2017-08-28 00:00:00", "product2", "page3", "2430", "1535"],
+        ["2017-08-28 00:00:00", "product2", "page4", "2741", "1701"],
+        ["2017-09-04 00:00:00", np.nan, np.nan, "402268", "105046"],
+        ["2017-09-04 00:00:00", "product1", "page5", "12", "12"],
+        ["2017-09-04 00:00:00", "product1", "page6", "2", "2"],
+        ["2017-09-04 00:00:00", "product1", "page7", "8", "7"],
+        ["2017-09-04 00:00:00", "product2", "page8", "9717", "6239"],
+        ["2017-09-04 00:00:00", "product2", "page9", "10550", "6799"]
     ]
     assert fix_report._parse_data(raw_data, 2) == result
 
@@ -137,5 +204,24 @@ def test_parse_response_2dim(fix_report):
         ["11911", "page5", "4", "5"],
         ["12900", "page6", "1", "1"]
     ], columns=["Unit Name", "Page", "Visits", "Page Views"])
+    assert fix_report.dataframe.values.tolist() == result.values.tolist()
+    assert list(fix_report.dataframe.columns) == list(result.columns)
+
+
+def test_parse_response_2dim_and_granularity_missing_values(fix_report):
+    file_path = mock_dir + "/report_response_2dim_and_granularity_missing_values.json"
+    with open(file_path, mode="r") as json_file:
+        raw_response = json.load(json_file)
+
+    fix_report.raw_response = raw_response
+    fix_report.parse()
+
+    result = pd.DataFrame([
+        ["2018-01-01 04:00:00", np.nan, "mkt1", "31"],
+        ["2018-01-01 04:00:00", np.nan, "mkt2", "30"],
+        ["2018-01-01 04:00:00", "product1", "mkt1", "28"],
+        ["2018-01-01 04:00:00", "product1", "mkt2", "18"],
+        ["2018-01-01 04:00:00", "product2", "mkt2", "11"]
+    ], columns=["Granularity", "Product Name", "Last Touch Marketing Channel", "Visits"])
     assert fix_report.dataframe.values.tolist() == result.values.tolist()
     assert list(fix_report.dataframe.columns) == list(result.columns)

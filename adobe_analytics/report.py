@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import more_itertools
+import datetime
 
 
 class Report:
@@ -40,11 +41,10 @@ class Report:
         :param metric_count: int, number of metrics in report
         :return: list of lists
         """
-        if "breakdown" in data[0]:
+        if len(data) > 0 and "breakdown" in data[0]:
             rows = list()
             for chunk in data:
-                dim_is_none = "name" not in chunk or chunk["name"] == ""
-                dim_value = np.nan if dim_is_none else chunk["name"]
+                dim_value = Report._dimension_value(chunk)
                 rows += [[dim_value] + row
                          for row in Report._parse_data(chunk["breakdown"], metric_count)]
             return rows
@@ -62,15 +62,39 @@ class Report:
         """
         rows = list()
         for chunk in data:
-            dim_name = chunk["name"] if chunk["name"] != "" else np.nan
-            # data alignment is a bit different if adding granularity breakdowns
             part_rows = [(val if val != "" else np.nan) for val in chunk["counts"]]
+            # data alignment is a bit different if adding granularity breakdowns
             if len(chunk["counts"]) > metric_count:
                 part_rows = more_itertools.chunked(iterable=part_rows, n=metric_count+1)
             else:
                 part_rows = [part_rows]
-            rows += [[dim_name]+part_row for part_row in part_rows]
+
+            dim_value = Report._dimension_value(chunk)
+            rows += [[dim_value]+part_row for part_row in part_rows]
         return rows
+
+    @staticmethod
+    def _dimension_value(chunk):
+        if Report._dimension_value_is_nan(chunk):
+            return np.nan
+        elif "year" in chunk:
+            return Report._to_datetime(chunk)
+        else:
+            return chunk["name"]
+
+    @staticmethod
+    def _dimension_value_is_nan(chunk):
+        return ("name" not in chunk) or (chunk["name"] == "") or (chunk["name"] == "::unspecified::")
+
+    @staticmethod
+    def _to_datetime(chunk):
+        time_stamp = datetime.datetime(
+            year=chunk["year"],
+            month=chunk["month"],
+            day=chunk["day"],
+            hour=chunk.get("hour", 0)
+        )
+        return time_stamp.strftime("%Y-%m-%d %H:00:00")
 
     @staticmethod
     def _fix_header(dimensions, metrics, data):
@@ -81,9 +105,13 @@ class Report:
 
 
 if __name__ == '__main__':
-    print(type(response))
+    from tests import mock_dir
+    import json
+    import pprint
 
-    report = Report(123)
-    report.raw_response = response
-    report.parse()
-    print(report.dataframe)
+    file_path = mock_dir + "/report_data_1dim_and_granularity.json"
+    with open(file_path, mode="r") as json_file:
+        raw_data = json.load(json_file)
+
+    result = Report(123)._parse_data(raw_data, 2)
+    pprint.pprint(result)
