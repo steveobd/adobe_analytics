@@ -11,8 +11,6 @@ class ReportDownloader:
 
     def download(self, obj):
         report = self._to_report(obj)
-        print("ReportID:", report.id)  # TODO: should be logging
-
         report.raw_response = self.check_until_ready(report)
         report.parse()
         return report
@@ -39,6 +37,7 @@ class ReportDownloader:
             data=request_data
         )
         report_id = response["reportID"]
+        print("ReportID:", report_id)  # TODO: should be logging
         return Report(report_id)
 
     def check_until_ready(self, report):

@@ -70,7 +70,7 @@ class Report:
             year=chunk["year"],
             month=chunk["month"],
             day=chunk["day"],
-            hour=chunk["hour"]
+            hour=chunk.get("hour", 0)
         )
         return time_stamp.strftime("%Y-%m-%d %H:00:00")
 
@@ -101,3 +101,16 @@ class Report:
         if len(header) != len(data[0]):  # can only be when granularity breakdown is used
             return ["Granularity"] + header
         return header
+
+
+if __name__ == '__main__':
+    from tests import mock_dir
+    import json
+    import pprint
+
+    file_path = mock_dir + "/report_data_2dim_and_granularity.json"
+    with open(file_path, mode="r") as json_file:
+        raw_data = json.load(json_file)
+
+    result = Report(123)._parse_data(raw_data, 2)
+    pprint.pprint(result)

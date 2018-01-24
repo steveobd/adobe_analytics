@@ -172,17 +172,17 @@ def test_parse_data_2dim_and_granularity(fix_report):
         raw_data = json.load(json_file)
 
     result = [
-        ["Week 35, 2017", np.nan, np.nan, "102095", "24932"],
-        ["Week 35, 2017", "product1", "page1", "1", "1"],
-        ["Week 35, 2017", "product1", "page2", "2", "2"],
-        ["Week 35, 2017", "product2", "page3", "2430", "1535"],
-        ["Week 35, 2017", "product2", "page4", "2741", "1701"],
-        ["Week 36, 2017", np.nan, np.nan, "402268", "105046"],
-        ["Week 36, 2017", "product1", "page5", "12", "12"],
-        ["Week 36, 2017", "product1", "page6", "2", "2"],
-        ["Week 36, 2017", "product1", "page7", "8", "7"],
-        ["Week 36, 2017", "product2", "page8", "9717", "6239"],
-        ["Week 36, 2017", "product2", "page9", "10550", "6799"]
+        ["2017-08-28 00:00:00", np.nan, np.nan, "102095", "24932"],
+        ["2017-08-28 00:00:00", "product1", "page1", "1", "1"],
+        ["2017-08-28 00:00:00", "product1", "page2", "2", "2"],
+        ["2017-08-28 00:00:00", "product2", "page3", "2430", "1535"],
+        ["2017-08-28 00:00:00", "product2", "page4", "2741", "1701"],
+        ["2017-09-04 00:00:00", np.nan, np.nan, "402268", "105046"],
+        ["2017-09-04 00:00:00", "product1", "page5", "12", "12"],
+        ["2017-09-04 00:00:00", "product1", "page6", "2", "2"],
+        ["2017-09-04 00:00:00", "product1", "page7", "8", "7"],
+        ["2017-09-04 00:00:00", "product2", "page8", "9717", "6239"],
+        ["2017-09-04 00:00:00", "product2", "page9", "10550", "6799"]
     ]
     assert fix_report._parse_data(raw_data, 2) == result
 
