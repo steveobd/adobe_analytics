@@ -127,8 +127,7 @@ Here's a small overview of features I will work on next:
 - maybe an easy interface for classification uploads
 
 #### Tests
-I am migrating the testing suite to [py.test](https://github.com/pytest-dev/pytest) right now. Execute them in
-the terminal via
+Execute tests in the terminal via
 ```bash
 pytest -v
 ```
