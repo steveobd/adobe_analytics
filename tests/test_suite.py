@@ -4,6 +4,10 @@ from tests import fix_client, fix_suite, fix_report_definition, fix_report_downl
 from tests import add_mock_request_queue, add_mock_request_get_success
 
 
+def test_representation(fix_suite):
+    assert fix_suite.__repr__() == "test_suite (omniture.api-gateway)"
+
+
 def test_response_to_dict():
     from adobe_analytics.suite import Suite
     response = [{
@@ -49,9 +53,9 @@ def test_download(fix_suite, fix_report):
         assert report.dataframe is not None
 
 
-def test_queue(fix_report_definition, fix_report_downloader):
+def test_queue(fix_report_definition):
     with requests_mock.mock() as mock_context:
         add_mock_request_queue(mock_context)
 
-        report = fix_report_downloader.queue(fix_report_definition)
+        report = fix_suite.queue(fix_report_definition)
         assert report.id == 123
