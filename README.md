@@ -34,8 +34,8 @@ in a json file.
 
 ```bash
 {
-    "username": "your_aa_user_name",
-    "password": "your_aa_password"
+    "username": "my_username",
+    "password": "my_password"
 }
 ``` 
 
@@ -132,7 +132,7 @@ Execute tests in the terminal via
 pytest -v
 ```
 
-#### Contributers
+#### Contributors
 I took over [this branch](https://github.com/dancingcactus/python-omniture) as the project there
 seems to be abandoned. Thanks to everyone who put work into this project!
 
