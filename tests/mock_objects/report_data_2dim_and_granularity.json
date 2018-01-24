@@ -1,8 +1,8 @@
 [{
     "name": "Week 35, 2017",
-    "year":2017,
-    "month":8,
-    "day":28,
+    "year": 2017,
+    "month": 8,
+    "day": 28,
     "breakdown": [{
         "name": "",
         "counts": [
@@ -23,9 +23,9 @@
     }]
 }, {
     "name": "Week 36, 2017",
-    "year":2017,
-    "month":9,
-    "day":4,
+    "year": 2017,
+    "month": 9,
+    "day": 4,
     "breakdown": [{
         "name": "",
         "counts": [

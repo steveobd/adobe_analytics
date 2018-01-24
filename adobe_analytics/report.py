@@ -52,6 +52,28 @@ class Report:
             return Report._parse_most_granular(data, metric_count)
 
     @staticmethod
+    def _parse_most_granular(data, metric_count):
+        """
+        Parsing of the most granular part of the response.
+        It is different depending on if there's a granularity breakdown or not
+        :param data: dict
+        :param metric_count: int, number of metrics in report
+        :return: list of lists
+        """
+        rows = list()
+        for chunk in data:
+            part_rows = [(val if val != "" else np.nan) for val in chunk["counts"]]
+            # data alignment is a bit different if adding granularity breakdowns
+            if len(chunk["counts"]) > metric_count:
+                part_rows = more_itertools.chunked(iterable=part_rows, n=metric_count+1)
+            else:
+                part_rows = [part_rows]
+
+            dim_value = Report._dimension_value(chunk)
+            rows += [[dim_value]+part_row for part_row in part_rows]
+        return rows
+
+    @staticmethod
     def _dimension_value(chunk):
         if Report._dimension_value_is_nan(chunk):
             return np.nan
@@ -75,27 +97,6 @@ class Report:
         return time_stamp.strftime("%Y-%m-%d %H:00:00")
 
     @staticmethod
-    def _parse_most_granular(data, metric_count):
-        """
-        Parsing of the most granular part of the response.
-        It is different depending on if there's a granularity breakdown or not
-        :param data: dict
-        :param metric_count: int, number of metrics in report
-        :return: list of lists
-        """
-        rows = list()
-        for chunk in data:
-            dim_name = chunk["name"] if chunk["name"] != "" else np.nan
-            # data alignment is a bit different if adding granularity breakdowns
-            part_rows = [(val if val != "" else np.nan) for val in chunk["counts"]]
-            if len(chunk["counts"]) > metric_count:
-                part_rows = more_itertools.chunked(iterable=part_rows, n=metric_count+1)
-            else:
-                part_rows = [part_rows]
-            rows += [[dim_name]+part_row for part_row in part_rows]
-        return rows
-
-    @staticmethod
     def _fix_header(dimensions, metrics, data):
         header = dimensions + metrics
         if len(header) != len(data[0]):  # can only be when granularity breakdown is used
@@ -108,7 +109,7 @@ if __name__ == '__main__':
     import json
     import pprint
 
-    file_path = mock_dir + "/report_data_2dim_and_granularity.json"
+    file_path = mock_dir + "/report_data_1dim_and_granularity.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
 
