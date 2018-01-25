@@ -25,7 +25,7 @@ def test_init_dimensions_as_list():
         "dateFrom": "2017-01-01",
         "dateTo": "2017-12-31"
     }
-    assert definition.to_dict() == expected_result
+    assert definition.raw == expected_result
 
 
 def test_init_dimensions_as_str():
@@ -48,7 +48,7 @@ def test_init_dimensions_as_str():
         "dateFrom": "2017-01-01",
         "dateTo": "2017-12-31"
     }
-    assert definition.to_dict() == expected_result
+    assert definition.raw == expected_result
 
 
 def test_init_dimensions_as_list_of_dict():
@@ -75,7 +75,7 @@ def test_init_dimensions_as_list_of_dict():
         "dateFrom": "2017-01-01",
         "dateTo": "2017-12-31"
     }
-    assert definition.to_dict() == expected_result
+    assert definition.raw == expected_result
 
 
 def test_init_no_metrics():
@@ -107,7 +107,7 @@ def test_no_dates():
     )
 
     with pytest.raises(AssertionError):
-        definition.to_dict()
+        _ = definition.raw
 
 
 def test_abs_and_relative_dates():
@@ -122,7 +122,7 @@ def test_abs_and_relative_dates():
     )
 
     with pytest.raises(AssertionError):
-        definition.to_dict()
+        _ = definition.raw
 
 
 def test_dates_from_relative():
@@ -168,7 +168,7 @@ def test_with_segments():
         "dateFrom": "2017-01-01",
         "dateTo": "2017-12-31"
     }
-    assert definition.to_dict() == expected_result
+    assert definition.raw == expected_result
 
 
 def test_with_granularity():
@@ -194,7 +194,7 @@ def test_with_granularity():
         "dateTo": "2017-12-31",
         "dateGranularity": "day"
     }
-    assert definition.to_dict() == expected_result
+    assert definition.raw == expected_result
 
 
 def test_with_sort_by():
@@ -220,7 +220,7 @@ def test_with_sort_by():
         "dateTo": "2017-12-31",
         "sortBy": "pageviews"
     }
-    assert definition.to_dict() == expected_result
+    assert definition.raw == expected_result
 
 
 def test_inject_suite_id(fix_report_definition):
@@ -228,19 +228,6 @@ def test_inject_suite_id(fix_report_definition):
 
     definition = ReportDefinition.inject_suite_id(fix_report_definition, "my_suite_id")
     assert definition["reportSuiteID"] == "my_suite_id"
-
-
-def test_assert_dict_with_dict():
-    from adobe_analytics.report_definition import ReportDefinition
-
-    obj = {"a": 1}
-    assert obj == ReportDefinition.assert_dict(obj)
-
-
-def test_assert_dict_with_definition(fix_report_definition):
-    from adobe_analytics.report_definition import ReportDefinition
-
-    assert fix_report_definition.to_dict() == ReportDefinition.assert_dict(fix_report_definition)
 
 
 def test_granulairty_positive():

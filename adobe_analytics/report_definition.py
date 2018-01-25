@@ -20,36 +20,18 @@ class ReportDefinition:
         self.granularity = granularity
         self.kwargs = kwargs
 
-    @staticmethod
-    def assert_dict(report_definition):
-        if isinstance(report_definition, ReportDefinition):
-            return report_definition.to_dict()
-        return report_definition
-
-    @staticmethod
-    def inject_suite_id(report_definition, suite_id):
+    def inject_suite_id(self, suite_id):
         assert isinstance(suite_id, str)
-        report_definition = ReportDefinition.assert_dict(report_definition)
 
-        report_definition = copy.deepcopy(report_definition)  # dict is mutable
-        report_definition["reportSuiteID"] = suite_id
-        return report_definition
+        raw_definition = copy.deepcopy(self.raw)
+        raw_definition["reportSuiteID"] = suite_id
+        return raw_definition
 
-    def to_dict(self):
+    @property
+    def raw(self):
+        self._determine_dates()
         report_definition = self._base_definition()
         report_definition = self._inject_optional_fields(report_definition)
-        return report_definition
-
-    def _base_definition(self):
-        self._determine_dates()
-
-        report_definition = {
-            "reportSuiteID": None,  # will be replaced
-            "elements": self._prepare_dimensions(),
-            "metrics": self._prepare_metrics(),
-            "dateFrom": self.date_from,
-            "dateTo": self.date_to
-        }
         return report_definition
 
     def _determine_dates(self):
@@ -70,16 +52,19 @@ class ReportDefinition:
         self.date_to = self._date_days_ago(days=1)
         self.last_days = None
 
-    def _inject_optional_fields(self, report_definition):
-        if self.segments is not None:
-            report_definition["segments"] = self._prepare_segments()
+    @staticmethod
+    def _date_days_ago(days):
+        date = datetime.date.today() - datetime.timedelta(days=days)
+        return date.isoformat()
 
-        if self.granularity is not None:
-            self._validate_granularity()
-            report_definition["dateGranularity"] = self.granularity
-
-        if self.kwargs:
-            report_definition.update(self.kwargs)
+    def _base_definition(self):
+        report_definition = {
+            "reportSuiteID": None,  # will be replaced
+            "elements": self._prepare_dimensions(),
+            "metrics": self._prepare_metrics(),
+            "dateFrom": self.date_from,
+            "dateTo": self.date_to
+        }
         return report_definition
 
     def _prepare_metrics(self):
@@ -101,7 +86,7 @@ class ReportDefinition:
 
         if isinstance(variable, str):
             variable = [variable]
-        return[ReportDefinition._clean_field(entry) for entry in variable]
+        return [ReportDefinition._clean_field(entry) for entry in variable]
 
     @staticmethod
     def _clean_field(field):
@@ -116,10 +101,17 @@ class ReportDefinition:
         else:
             raise ValueError("Unexpected type of dimension. Please use str or dict.")
 
-    @staticmethod
-    def _date_days_ago(days):
-        date = datetime.date.today() - datetime.timedelta(days=days)
-        return date.isoformat()
+    def _inject_optional_fields(self, report_definition):
+        if self.segments is not None:
+            report_definition["segments"] = self._prepare_segments()
+
+        if self.granularity is not None:
+            self._validate_granularity()
+            report_definition["dateGranularity"] = self.granularity
+
+        if self.kwargs:
+            report_definition.update(self.kwargs)
+        return report_definition
 
     def _validate_granularity(self):
         assert self.granularity in self.GRANULARITIES, "Granularity must be in: {}.".format(self.GRANULARITIES)

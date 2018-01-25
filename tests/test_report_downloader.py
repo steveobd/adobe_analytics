@@ -24,15 +24,6 @@ def test_to_report_from_report_def(fix_report_downloader, fix_report_definition)
         assert report.id == 123
 
 
-def test_to_report_from_report_dict(fix_report_downloader, fix_report_definition):
-    with requests_mock.mock() as mock_context:
-        add_mock_request_queue(mock_context)
-
-        report_definition = fix_report_definition.to_dict()
-        report = fix_report_downloader._to_report(report_definition)
-        assert report.id == 123
-
-
 def test_to_report_from_int(fix_report_downloader):
     from adobe_analytics.report import Report
 
@@ -62,7 +53,8 @@ def test_build_request_data_definition_without_suite_id(fix_report_definition):
     from adobe_analytics.report_downloader import ReportDownloader
 
     with pytest.raises(AssertionError):
-        ReportDownloader._build_request_data_definition(fix_report_definition)
+        json_def = fix_report_definition.raw
+        ReportDownloader._build_request_data_definition(json_def)
 
 
 def test_build_request_data_id(fix_report):
@@ -76,8 +68,7 @@ def test_queue(fix_report_downloader, fix_report_definition):
     with requests_mock.mock() as mock_context:
         add_mock_request_queue(mock_context)
 
-        dict_def = fix_report_definition.to_dict()
-        report = fix_report_downloader.queue(dict_def)
+        report = fix_report_downloader.queue(fix_report_definition)
         assert report.id == 123
 
 

@@ -16,29 +16,28 @@ class ReportDownloader:
         return report
 
     def _to_report(self, obj):
-        assert isinstance(obj, (Report, ReportDefinition, dict, int, float))
+        assert isinstance(obj, (Report, ReportDefinition, int, float))
 
         if isinstance(obj, Report):
             return obj
-        elif isinstance(obj, (ReportDefinition, dict)):
-            report_definition = ReportDefinition.assert_dict(obj)
-            return self.queue(report_definition)
+        elif isinstance(obj, ReportDefinition):
+            return self.queue(obj)
         else:
             return Report(report_id=obj)
 
     def queue(self, report_definition):
-        client = self.suite.client
+        json_definition = report_definition.inject_suite_id(self.suite.id)
+        request_data = self._build_request_data_definition(json_definition)
 
-        report_definition = ReportDefinition.inject_suite_id(report_definition, self.suite.id)
-        request_data = self._build_request_data_definition(report_definition)
+        client = self.suite.client
         response = client.request(
             api="Report",
             method="Queue",
             data=request_data
         )
-        report_id = response["reportID"]
-        print("ReportID:", report_id)
-        return Report(report_id)
+        report = Report(report_id=response["reportID"])
+        print("ReportID:", report.id)
+        return report
 
     def check_until_ready(self, report, max_attempts=-1):
         """ max_attemps is only designed for easier testing """
@@ -52,16 +51,16 @@ class ReportDownloader:
             interval = self._sleep_interval(poll_attempt)
             time.sleep(interval)
 
-
     @staticmethod
     def _sleep_interval(poll_attempt):
         exponential = 5 * 2**poll_attempt
         return min(exponential, 300)  # max 5 min sleep
 
-    def check(self, report):
-        client = self.suite.client
-
+    def check(self, obj):
+        report = self._to_report(obj)
         request_data = self._build_request_data_id(report)
+
+        client = self.suite.client
         response = client.request(
             api="Report",
             method="Get",
@@ -73,9 +72,9 @@ class ReportDownloader:
         return None
 
     def cancel(self, report):
-        client = self.suite.client
-
         request_data = self._build_request_data_id(report)
+
+        client = self.suite.client
         response = client.request(
             api='Report',
             method='Cancel',
@@ -84,10 +83,9 @@ class ReportDownloader:
         return response
 
     @staticmethod
-    def _build_request_data_definition(report_definition):
-        report_definition = ReportDefinition.assert_dict(report_definition)
-        assert report_definition["reportSuiteID"] is not None
-        return {"reportDescription": report_definition}
+    def _build_request_data_definition(json_definition):
+        assert json_definition["reportSuiteID"] is not None
+        return {"reportDescription": json_definition}
 
     @staticmethod
     def _build_request_data_id(report):
