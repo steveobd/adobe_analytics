@@ -18,7 +18,7 @@ or via git:
 
     pip install git+http://github.com/SaturnFromTitan/adobe_analytics.git
 
-Currently only Python 3.6 is officially supported.
+Python 3.6 and 3.5 are supported.
 
 ## Authentication
 Authenticating with the the API requires knowing your user name and shared secret. Both can be
@@ -80,8 +80,8 @@ report = suite.download(report_def)
 This will generate the report definition, run the report, download and parse it for you. Alternatively you can also 
 just queue the report and download it later (-> async reporting). The report definition object is very versatile as
 it supports the **kwargs argument. Therefore you can specify every field that is listed in the [official Adobe Analytics](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-reportdescription-1#reference_9ECD594AEDD240D7A475868824079F06)
-documentation and supported by the REST API. In case you don't want to use the ReportDefinition class, you can also
-just pass a well-formatted dictionary to `suite.download()`, however, ReportDefinition is the recommended way.
+documentation and supported by the REST API.
+
 Note that the function also accepts queued reports as input for asynchronous reporting.  
 
 The fields for dimensions, metrics and segments should be lists of strings representing the ids. However, string inputs
@@ -135,9 +135,11 @@ Execute tests in the terminal via
 py.test -v
 ```
 
+Tests are automatically executed on every push on travis-CI.
+
 #### Contributors
-I took over [this branch](https://github.com/dancingcactus/python-omniture) as the project there
-seems to be abandoned. Thanks to everyone who put work into this project!
+I took over [this branch](https://github.com/dancingcactus/python-omniture) as the project seems to be
+abandoned there. Thanks to everyone who put work into this project!
 
 Special thanks go to
 - [debrouwere](https://github.com/debrouwere) for initiating the framework
