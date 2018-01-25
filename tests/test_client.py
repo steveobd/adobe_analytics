@@ -32,7 +32,7 @@ def test_request_without_auth(fix_client):
 
 
 def test_serialize_header(fix_client):
-    properties = collections.OrderedDict(a="yo1", b="yo2")
+    properties = collections.OrderedDict([("a", "yo1"), ("b", "yo2")])
     result = fix_client._serialize_header(properties)
     assert result == 'a="yo1", b="yo2"'
 
