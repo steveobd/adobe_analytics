@@ -37,7 +37,7 @@ class ReportDownloader:
             data=request_data
         )
         report_id = response["reportID"]
-        print("ReportID:", report_id)  # TODO: should be logging
+        print("ReportID:", report_id)
         return Report(report_id)
 
     def check_until_ready(self, report, max_attempts=-1):
@@ -51,7 +51,7 @@ class ReportDownloader:
 
             interval = self._sleep_interval(poll_attempt)
             time.sleep(interval)
-        return None
+
 
     @staticmethod
     def _sleep_interval(poll_attempt):

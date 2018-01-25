@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/gh/SaturnFromTitan/adobe_analytics/branch/master/graph/badge.svg)](https://codecov.io/gh/SaturnFromTitan/adobe_analytics)
 
 ## Description
-`adobe_analytics` is a wrapper around the Adobe Analytics REST API.
+`adobe_analytics` is a wrapper around Adobe Analytics' REST API v1.4.
 
 It is not meant to be comprehensive. Instead, it provides a high-level interface
 to many of the common reporting queries, and allows you to do construct other queries
@@ -12,17 +12,20 @@ closer to the metal.
 ## Installation
 Through PyPI:
 
-    pip install adobbe_analytics
+    pip install adobe_analytics
 
 or via git:
 
     pip install git+http://github.com/SaturnFromTitan/adobe_analytics.git
 
-Currently only Python 3 is supported.
+Currently only Python 3.6 is officially supported.
 
 ## Authentication
+Authenticating with the the API requires knowing your user name and shared secret. Both can be
+obtained from the admin panel under `User Management -> Users -> Access` where Web Service Access
+is granted.
 
-To authenticate use the `Client` object as follows:
+When you have those, you can authenticate by using a `Client` object as follows:
 
 ```python
 from adobe_analytics import Client
@@ -30,7 +33,7 @@ client = Client('my_username', 'my_password')
 ```
 
 To avoid hard-coding passwords you can put your username and password
-in a json file.
+in a json file or environment variable.
 
 ```bash
 {
@@ -39,7 +42,7 @@ in a json file.
 }
 ``` 
 
-you can then also just pass the path for authentication
+If you're using a json file, you can also just pass the path for authentication
 ```python
 from adobe_analytics import Client
 client = Client.from_json("my_path")
@@ -129,7 +132,7 @@ Here's a small overview of features I will work on next:
 #### Tests
 Execute tests in the terminal via
 ```bash
-pytest -v
+py.test -v
 ```
 
 #### Contributors

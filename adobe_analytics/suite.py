@@ -14,7 +14,7 @@ class Suite(object):
         self._downloader = ReportDownloader(self)
 
     def download(self, obj):
-        """ obj can be Report, ReportDefinition, dict, int or float """
+        """ obj can be Report, ReportDefinition, int or float """
         return self._downloader.download(obj)
 
     def queue(self, definition):
