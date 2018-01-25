@@ -37,7 +37,7 @@ CLASSIFIERS = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Scientific/Engineering :: Information Analysis',
-    'Programming Language :: Python :: 3.5'
+    'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6'
 ]
 
