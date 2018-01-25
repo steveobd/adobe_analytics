@@ -285,3 +285,11 @@ def test_clean_field_list():
 
     with pytest.raises(ValueError):
         ReportDefinition._clean_field(["pageviews"])
+
+
+def test_suite_id_is_none_after_injection(fix_report_definition):
+    # suite id in raw isn't allowed to change when calling inject_suite_id
+    # this is critical, as raw returns a dict which is mutable by nature
+    assert fix_report_definition.raw["reportSuiteID"] is None
+    fix_report_definition.inject_suite_id("my_suite_id")
+    assert fix_report_definition.raw["reportSuiteID"] is None
