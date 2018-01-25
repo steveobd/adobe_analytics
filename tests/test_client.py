@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from tests import fix_client, fix_suite  # import is used
-from tests import test_suite_id, mock_dir
+from tests import mock_dir
+import collections
 
 
 def test_fom_json():
@@ -31,7 +32,7 @@ def test_request_without_auth(fix_client):
 
 
 def test_serialize_header(fix_client):
-    properties = {"a": "yo1", "b": "yo2"}
+    properties = collections.OrderedDict(a="yo1", b="yo2")
     result = fix_client._serialize_header(properties)
     assert result == 'a="yo1", b="yo2"'
 

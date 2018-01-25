@@ -58,7 +58,7 @@ class Client(object):
             "Username": self.username,
             "PasswordDigest": password_64.decode().strip(),
             "Nonce": base64nonce.decode().strip(),
-            "Created": created_date,
+            "Created": created_date
         }
         header = 'UsernameToken ' + self._serialize_header(properties)
         return {'X-WSSE': header}
