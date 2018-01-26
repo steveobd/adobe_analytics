@@ -92,5 +92,5 @@ def _to_datetime(chunk):
 def _fix_header(dimensions, metrics, data):
     header = dimensions + metrics
     if len(header) != len(data[0]):  # can only be when granularity breakdown is used
-        return ["Granularity"] + header
+        return ["Datetime"] + header
     return header

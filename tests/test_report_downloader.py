@@ -129,7 +129,7 @@ def test_to_stacked_dataframe():
     ]
     expected_result = pd.DataFrame(
         data=expected_data * 2,
-        columns=["Granularity", "Product Name", "Last Touch Marketing Channel", "Visits"]
+        columns=["Datetime", "Product Name", "Last Touch Marketing Channel", "Visits"]
     )
 
     assert expected_result.equals(result)

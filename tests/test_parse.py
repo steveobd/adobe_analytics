@@ -31,7 +31,7 @@ def test_fix_header_with_granularity():
         metrics=["pageviews"],
         data=data
     )
-    assert result == ["Granularity", "product", "pageviews"]
+    assert result == ["Datetime", "product", "pageviews"]
 
 
 def test_fix_header_without_granularity():
@@ -194,6 +194,6 @@ def test_parse_response_2dim_and_granularity_missing_values():
         ["2018-01-01 04:00:00", "product1", "mkt1", "28"],
         ["2018-01-01 04:00:00", "product1", "mkt2", "18"],
         ["2018-01-01 04:00:00", "product2", "mkt2", "11"]
-    ], columns=["Granularity", "Product Name", "Last Touch Marketing Channel", "Visits"])
+    ], columns=["Datetime", "Product Name", "Last Touch Marketing Channel", "Visits"])
     assert result.values.tolist() == expected_result.values.tolist()
     assert list(result.columns) == list(expected_result.columns)
