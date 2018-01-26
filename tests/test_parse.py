@@ -2,41 +2,31 @@ import pandas as pd
 import numpy as np
 import json
 
-from tests import fix_report  # import is used
 from tests import mock_dir
-
-
-def test_representation(fix_report):
-    assert fix_report.__repr__() == "Report: 123"
+import adobe_analytics.parse as parse
 
 
 def test_classification_or_name_with_classification():
-    from adobe_analytics.report import Report
-
     obj = {
         "name": "Product",
         "classification": "Product Name"
     }
-    assert Report._classification_or_name(obj) == "Product Name"
+    assert parse._classification_or_name(obj) == "Product Name"
 
 
 def test_classification_or_name_without_classification():
-    from adobe_analytics.report import Report
-
     obj = {
         "name": "Product",
     }
-    assert Report._classification_or_name(obj) == "Product"
+    assert parse._classification_or_name(obj) == "Product"
 
 
 def test_fix_header_with_granularity():
-    from adobe_analytics.report import Report
-
     data = [
         [1, 2, 3],
         [4, 5, 6]
     ]
-    result = Report._fix_header(
+    result = parse._fix_header(
         dimensions=["product"],
         metrics=["pageviews"],
         data=data
@@ -45,13 +35,11 @@ def test_fix_header_with_granularity():
 
 
 def test_fix_header_without_granularity():
-    from adobe_analytics.report import Report
-
     data = [
         [1, 2],
         [4, 5]
     ]
-    result = Report._fix_header(
+    result = parse._fix_header(
         dimensions=["product"],
         metrics=["pageviews"],
         data=data
@@ -60,55 +48,41 @@ def test_fix_header_without_granularity():
 
 
 def test_dim_is_nan_no_name():
-    from adobe_analytics.report import Report
-
     chunk = dict()
-    assert Report._dimension_value_is_nan(chunk)
+    assert parse._dimension_value_is_nan(chunk)
 
 
 def test_dim_is_nan_empty_name():
-    from adobe_analytics.report import Report
-
     chunk = {"name": ""}
-    assert Report._dimension_value_is_nan(chunk)
+    assert parse._dimension_value_is_nan(chunk)
 
 
 def test_dim_is_nan_no_name_classification():
-    from adobe_analytics.report import Report
-
     chunk = {"name": "::unspecified::"}
-    assert Report._dimension_value_is_nan(chunk)
+    assert parse._dimension_value_is_nan(chunk)
 
 
 def test_dim_is_nan_false():
-    from adobe_analytics.report import Report
-
     chunk = {"name": "lasttouchchannel"}
-    assert not Report._dimension_value_is_nan(chunk)
+    assert not parse._dimension_value_is_nan(chunk)
 
 
 def test_parse_datetime():
-    from adobe_analytics.report import Report
-
     chunk = {
         "year": 2017,
         "month": 3,
         "day": 1,
         "hour": 5
     }
-    assert Report._to_datetime(chunk) == "2017-03-01 05:00:00"
+    assert parse._to_datetime(chunk) == "2017-03-01 05:00:00"
 
 
 def test_dimension_value_nan():
-    from adobe_analytics.report import Report
-
     chunk = dict()
-    assert pd.isnull(Report._dimension_value(chunk))
+    assert pd.isnull(parse._dimension_value(chunk))
 
 
 def test_dimension_value_datetime():
-    from adobe_analytics.report import Report
-
     chunk = {
         "name": "Mon, 1st March 2017",
         "year": 2017,
@@ -116,17 +90,15 @@ def test_dimension_value_datetime():
         "day": 1,
         "hour": 5
     }
-    assert Report._dimension_value(chunk) == "2017-03-01 05:00:00"
+    assert parse._dimension_value(chunk) == "2017-03-01 05:00:00"
 
 
 def test_dimension_value_name():
-    from adobe_analytics.report import Report
-
     chunk = {"name": "Product Name"}
-    assert Report._dimension_value(chunk) == "Product Name"
+    assert parse._dimension_value(chunk) == "Product Name"
 
 
-def test_parse_data_1dim(fix_report):
+def test_parse_data_1dim():
     file_path = mock_dir+"/report_data_1dim.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
@@ -135,10 +107,10 @@ def test_parse_data_1dim(fix_report):
         [np.nan, "383420", "1471063"],
         ["11911", "4", "6"]
     ]
-    assert fix_report._parse_data(raw_data, 2) == result
+    assert parse._parse_data(raw_data, 2) == result
 
 
-def test_parse_data_2dim(fix_report):
+def test_parse_data_2dim():
     file_path = mock_dir + "/report_data_2dim.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
@@ -151,10 +123,10 @@ def test_parse_data_2dim(fix_report):
         ["11911", "page4", "4", "5"],
         ["12900", "page5", "1", "1"]
     ]
-    assert fix_report._parse_data(raw_data, 2) == result
+    assert parse._parse_data(raw_data, 2) == result
 
 
-def test_parse_data_1dim_and_granularity(fix_report):
+def test_parse_data_1dim_and_granularity():
     file_path = mock_dir + "/report_data_1dim_and_granularity.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
@@ -167,10 +139,10 @@ def test_parse_data_1dim_and_granularity(fix_report):
         ["2017-09-04 00:00:00", "page1", "9717", "6239"],
         ["2017-09-04 00:00:00", "page3", "10550", "6799"]
     ]
-    assert fix_report._parse_data(raw_data, 2) == result
+    assert parse._parse_data(raw_data, 2) == result
 
 
-def test_parse_data_2dim_and_granularity(fix_report):
+def test_parse_data_2dim_and_granularity():
     file_path = mock_dir + "/report_data_2dim_and_granularity.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
@@ -188,18 +160,16 @@ def test_parse_data_2dim_and_granularity(fix_report):
         ["2017-09-04 00:00:00", "product2", "page8", "9717", "6239"],
         ["2017-09-04 00:00:00", "product2", "page9", "10550", "6799"]
     ]
-    assert fix_report._parse_data(raw_data, 2) == result
+    assert parse._parse_data(raw_data, 2) == result
 
 
-def test_parse_response_2dim(fix_report):
+def test_parse_response_2dim():
     file_path = mock_dir + "/Report.Get.Ready.json"
     with open(file_path, mode="r") as json_file:
         raw_response = json.load(json_file)
+    result = parse.parse(raw_response)
 
-    fix_report.raw_response = raw_response
-    fix_report.parse()
-
-    result = pd.DataFrame([
+    expected_result = pd.DataFrame([
         [np.nan, np.nan, "209726", "0"],
         [np.nan, "page1", "2", "2"],
         [np.nan, "page2", "2", "2"],
@@ -208,24 +178,22 @@ def test_parse_response_2dim(fix_report):
         ["11911", "page5", "4", "5"],
         ["12900", "page6", "1", "1"]
     ], columns=["Unit Name", "Page", "Visits", "Page Views"])
-    assert fix_report.dataframe.values.tolist() == result.values.tolist()
-    assert list(fix_report.dataframe.columns) == list(result.columns)
+    assert result.values.tolist() == expected_result.values.tolist()
+    assert list(result.columns) == list(expected_result.columns)
 
 
-def test_parse_response_2dim_and_granularity_missing_values(fix_report):
+def test_parse_response_2dim_and_granularity_missing_values():
     file_path = mock_dir + "/report_response_2dim_and_granularity_missing_values.json"
     with open(file_path, mode="r") as json_file:
         raw_response = json.load(json_file)
+    result = parse.parse(raw_response)
 
-    fix_report.raw_response = raw_response
-    fix_report.parse()
-
-    result = pd.DataFrame([
+    expected_result = pd.DataFrame([
         ["2018-01-01 04:00:00", np.nan, "mkt1", "31"],
         ["2018-01-01 04:00:00", np.nan, "mkt2", "30"],
         ["2018-01-01 04:00:00", "product1", "mkt1", "28"],
         ["2018-01-01 04:00:00", "product1", "mkt2", "18"],
         ["2018-01-01 04:00:00", "product2", "mkt2", "11"]
     ], columns=["Granularity", "Product Name", "Last Touch Marketing Channel", "Visits"])
-    assert fix_report.dataframe.values.tolist() == result.values.tolist()
-    assert list(fix_report.dataframe.columns) == list(result.columns)
+    assert result.values.tolist() == expected_result.values.tolist()
+    assert list(result.columns) == list(expected_result.columns)

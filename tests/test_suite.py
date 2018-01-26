@@ -1,6 +1,7 @@
+import pandas as pd
 import requests_mock
 
-from tests import fix_client, fix_suite, fix_report_definition, fix_report_downloader, fix_report  # import is used
+from tests import fix_client, fix_suite, fix_report_definition, fix_report_downloader  # import is used
 from tests import add_mock_request_queue, add_mock_request_get_success
 
 
@@ -44,18 +45,18 @@ def test_segments_is_dict(fix_suite):
     assert isinstance(fix_suite.segments(), dict)
 
 
-def test_download(fix_suite, fix_report):
+def test_download(fix_suite):
     with requests_mock.mock() as mock_context:
         add_mock_request_queue(mock_context)
         add_mock_request_get_success(mock_context)
 
-        report = fix_suite.download(fix_report)
-        assert report.dataframe is not None
+        df = fix_suite.download(123)
+        assert isinstance(df, pd.DataFrame)
 
 
 def test_queue(fix_suite, fix_report_definition):
     with requests_mock.mock() as mock_context:
         add_mock_request_queue(mock_context)
 
-        report = fix_suite.queue(fix_report_definition)
-        assert report.id == 123
+        report_id = fix_suite.queue(fix_report_definition)
+        assert report_id == 123

@@ -1,8 +1,9 @@
 import time
 import itertools
+import pandas as pd
 
-from adobe_analytics.report import Report
 from adobe_analytics.report_definition import ReportDefinition
+from adobe_analytics.parse import parse
 
 
 class ReportDownloader:
@@ -10,24 +11,25 @@ class ReportDownloader:
         self.suite = suite
 
     def download(self, obj):
-        report = self._to_report(obj)
-        report.raw_response = self.check_until_ready(report)
-        report.parse()
-        return report
+        report_id = self._to_report_id(obj)
+        raw_response = self.check_until_ready(report_id)
+        if "totalPages" in raw_response["report"]:
+            raw_responses = self._download_other_pages(report_id, raw_response)
+            return self._to_stacked_dataframe(raw_responses)
+        else:
+            return parse(raw_response)
 
-    def _to_report(self, obj):
-        assert isinstance(obj, (Report, ReportDefinition, int, float))
+    def _to_report_id(self, obj):
+        assert isinstance(obj, (ReportDefinition, int, float))
 
-        if isinstance(obj, Report):
-            return obj
-        elif isinstance(obj, ReportDefinition):
+        if isinstance(obj, ReportDefinition):
             return self.queue(obj)
         else:
-            return Report(report_id=obj)
+            return int(obj)
 
     def queue(self, report_definition):
-        json_definition = report_definition.inject_suite_id(self.suite.id)
-        request_data = self._build_request_data_definition(json_definition)
+        raw_definition = report_definition.inject_suite_id(self.suite.id)
+        request_data = self._build_request_data_definition(raw_definition)
 
         client = self.suite.client
         response = client.request(
@@ -35,58 +37,72 @@ class ReportDownloader:
             method="Queue",
             data=request_data
         )
-        report = Report(report_id=response["reportID"])
-        print("ReportID:", report.id)
-        return report
-
-    def check_until_ready(self, report, max_attempts=-1):
-        """ max_attemps is only designed for easier testing """
-        counter = itertools.count() if max_attempts == -1 else range(max_attempts)
-
-        for poll_attempt in counter:
-            response = self.check(report)
-            if response is not None:
-                return response
-
-            interval = self._sleep_interval(poll_attempt)
-            time.sleep(interval)
-
-    @staticmethod
-    def _sleep_interval(poll_attempt):
-        exponential = 5 * 2**poll_attempt
-        return min(exponential, 300)  # max 5 min sleep
-
-    def check(self, obj):
-        report = self._to_report(obj)
-        request_data = self._build_request_data_id(report)
-
-        client = self.suite.client
-        response = client.request(
-            api="Report",
-            method="Get",
-            data=request_data
-        )
-        is_ready = ("error" not in response) or (response["error"] != "report_not_ready")
-        if is_ready:
-            return response
-        return None
-
-    def cancel(self, report):
-        request_data = self._build_request_data_id(report)
-
-        client = self.suite.client
-        response = client.request(
-            api='Report',
-            method='Cancel',
-            data=request_data
-        )
-        return response
+        report_id = int(response["reportID"])
+        print("ReportID:", report_id)
+        return report_id
 
     @staticmethod
     def _build_request_data_definition(json_definition):
         assert json_definition["reportSuiteID"] is not None
         return {"reportDescription": json_definition}
 
+    def check_until_ready(self, report_id, max_attempts=-1):
+        counter = itertools.count() if max_attempts == -1 else range(max_attempts)
+
+        for poll_attempt in counter:
+            response = self.get_attempt(report_id)
+            if response is not None:
+                return response
+
+            interval = self._sleep_interval(poll_attempt)
+            time.sleep(interval)
+
+    def get_attempt(self, report_id, page_number=1):
+        client = self.suite.client
+        response = client.request(
+            api="Report",
+            method="Get",
+            data={
+                "reportID": report_id,
+                "page": page_number
+            }
+        )
+        is_ready = ("error" not in response) or (response["error"] != "report_not_ready")
+        if is_ready:
+            return response
+        else:
+            return None
+
     @staticmethod
-    def _build_request_data_id(report):
-        return {"reportID": report.id}
+    def _sleep_interval(poll_attempt):
+        exponential = 5 * 2**poll_attempt
+        return min(exponential, 300)  # max 5 min sleep
+
+    def _download_other_pages(self, report, raw_response):
+        """ data warehouse requests are returned in paged format """
+        total_page_count = raw_response["report"]["totalPages"]
+        print("total page count:", total_page_count)
+
+        raw_responses = [raw_response]
+        for page_number in range(2, total_page_count+1):
+            print("page number:", page_number)
+            raw_response = self.get_attempt(report_id=report, page_number=page_number)
+            raw_responses.append(raw_response)
+        return raw_responses
+
+    @staticmethod
+    def _to_stacked_dataframe(raw_responses):
+        dfs = [parse(raw_response) for raw_response in raw_responses]
+        return pd.concat(dfs, ignore_index=True)
+
+    def cancel(self, report_id):
+        """ Cancels a queued report. As soon as report is ready, it can't be canceled anymore """
+        client = self.suite.client
+        response = client.request(
+            api='Report',
+            method='Cancel',
+            data={
+                "reportID": report_id
+            }
+        )
+        return response

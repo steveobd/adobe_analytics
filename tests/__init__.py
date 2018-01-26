@@ -39,12 +39,6 @@ def fix_report_downloader(fix_suite):
 
 
 @pytest.fixture()
-def fix_report():
-    from adobe_analytics.report import Report
-    return Report(123)
-
-
-@pytest.fixture()
 def fix_report_definition():
     from adobe_analytics.report_definition import ReportDefinition
 

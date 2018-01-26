@@ -11,4 +11,3 @@ base_dir = os.sep.join(app_dir_components[:-1])
 
 from adobe_analytics.client import Client
 from adobe_analytics.report_definition import ReportDefinition
-from adobe_analytics.report import Report
