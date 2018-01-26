@@ -12,18 +12,13 @@ class ReportDownloader:
 
     def download(self, obj):
         report_id = self._to_report_id(obj)
-        raw_response = self.check_until_ready(report_id)
+        first_response = self.check_until_ready(report_id)
+        raw_responses = [first_response]
 
-        # del raw_response["report"]["data"]
-        # import pprint
-        # pprint.pprint(raw_response)
-        # raise SystemExit
-
-        if "totalPages" in raw_response["report"]:
-            raw_responses = self._download_other_pages(report_id, raw_response)
-            return self._to_stacked_dataframe(raw_responses)
-        else:
-            return parse(raw_response)
+        if "totalPages" in first_response["report"]:
+            other_responses = self._download_other_pages(report_id, first_response)
+            raw_responses += other_responses
+        return self._to_stacked_dataframe(raw_responses)
 
     def _to_report_id(self, obj):
         assert isinstance(obj, (ReportDefinition, int, float))
@@ -89,7 +84,7 @@ class ReportDownloader:
         total_page_count = raw_response["report"]["totalPages"]
         print("total page count:", total_page_count)
 
-        raw_responses = [raw_response]
+        raw_responses = list()
         for page_number in range(2, total_page_count+1):
             print("page number:", page_number)
             raw_response = self.get_attempt(report_id=report, page_number=page_number)
