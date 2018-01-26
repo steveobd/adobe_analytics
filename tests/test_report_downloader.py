@@ -1,10 +1,14 @@
-import pandas as pd
 import requests_mock
 import pytest
+import json
+import pandas as pd
+import numpy as np
 
+from tests import mock_dir
 from tests import fix_client, fix_suite, fix_report_downloader, fix_report_definition  # import is used
 from tests import (add_mock_request_queue, add_mock_request_get_success,
-                   add_mock_request_get_fail, add_mock_request_cancel_success)
+                   add_mock_request_get_fail, add_mock_request_cancel_success,
+                   add_mock_request_get_dwh_1page)
 
 
 def test_init(fix_suite):
@@ -74,7 +78,6 @@ def test_check_fail(fix_report_downloader):
 
 def test_download_with_report_id(fix_report_downloader):
     with requests_mock.mock() as mock_context:
-        add_mock_request_queue(mock_context)
         add_mock_request_get_success(mock_context)
 
         df = fix_report_downloader.download(123)
@@ -107,3 +110,39 @@ def test_cancel(fix_report_downloader):
         response = fix_report_downloader.cancel(123)
         assert isinstance(response, bool)
         assert response
+
+
+def test_to_stacked_dataframe():
+    from adobe_analytics.report_downloader import ReportDownloader
+
+    file_path = mock_dir + "/report_response_2dim_and_granularity_missing_values.json"
+    with open(file_path, mode="r") as json_file:
+        raw_response = json.load(json_file)
+    result = ReportDownloader._to_stacked_dataframe([raw_response, raw_response])
+
+    expected_data = [
+        ["2018-01-01 04:00:00", np.nan, "mkt1", "31"],
+        ["2018-01-01 04:00:00", np.nan, "mkt2", "30"],
+        ["2018-01-01 04:00:00", "product1", "mkt1", "28"],
+        ["2018-01-01 04:00:00", "product1", "mkt2", "18"],
+        ["2018-01-01 04:00:00", "product2", "mkt2", "11"]
+    ]
+    expected_result = pd.DataFrame(
+        data=expected_data * 2,
+        columns=["Granularity", "Product Name", "Last Touch Marketing Channel", "Visits"]
+    )
+
+    assert expected_result.equals(result)
+
+
+def test_download_dwh_1page(fix_report_downloader):
+    with requests_mock.mock() as mock_context:
+        add_mock_request_get_dwh_1page(mock_context)
+
+        df = fix_report_downloader.download(123)
+
+    expected_result = pd.DataFrame([
+        [np.nan, "383420"],
+        ["11911", "4"]
+    ], columns=["Page", "Page Views"])
+    assert df.equals(expected_result)

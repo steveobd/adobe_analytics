@@ -13,6 +13,12 @@ class ReportDownloader:
     def download(self, obj):
         report_id = self._to_report_id(obj)
         raw_response = self.check_until_ready(report_id)
+
+        # del raw_response["report"]["data"]
+        # import pprint
+        # pprint.pprint(raw_response)
+        # raise SystemExit
+
         if "totalPages" in raw_response["report"]:
             raw_responses = self._download_other_pages(report_id, raw_response)
             return self._to_stacked_dataframe(raw_responses)
@@ -96,13 +102,13 @@ class ReportDownloader:
         return pd.concat(dfs, ignore_index=True)
 
     def cancel(self, report_id):
-        """ Cancels a queued report. As soon as report is ready, it can't be canceled anymore """
+        """ Cancels a requested report. When report is ready it can't be canceled anymore """
         client = self.suite.client
         response = client.request(
             api='Report',
             method='Cancel',
             data={
-                "reportID": report_id
+                "reportID": int(report_id)
             }
         )
         return response

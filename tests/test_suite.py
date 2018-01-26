@@ -2,7 +2,7 @@ import pandas as pd
 import requests_mock
 
 from tests import fix_client, fix_suite, fix_report_definition, fix_report_downloader  # import is used
-from tests import add_mock_request_queue, add_mock_request_get_success
+from tests import add_mock_request_queue, add_mock_request_get_success, add_mock_request_cancel_success
 
 
 def test_representation(fix_suite):
@@ -60,3 +60,12 @@ def test_queue(fix_suite, fix_report_definition):
 
         report_id = fix_suite.queue(fix_report_definition)
         assert report_id == 123
+
+
+def test_cancel(fix_suite):
+    with requests_mock.mock() as mock_context:
+        add_mock_request_cancel_success(mock_context)
+
+        response = fix_suite.cancel(123)
+        assert isinstance(response, bool)
+        assert response

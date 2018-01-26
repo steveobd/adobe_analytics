@@ -1,0 +1,25 @@
+{
+  "report": {
+    "elements": [{
+      "id": "page",
+      "name": "Page"
+    }],
+    "metrics": [{
+      "decimals": 0,
+      "id": "pageviews",
+      "name": "Page Views",
+      "type": "number"
+    }],
+    "data": [
+        {"counts": ["383420"], "name": ""},
+        {"counts": ["4"], "name": "11911"}
+    ],
+    "page": 1,
+    "period": "2017-01-01T00:00:00-0800/2017-12-31T00:00:00-0800",
+    "reportSuite": {
+      "id": "omniture.api-gateway",
+      "name": "test_suite"
+    },
+    "totalPages": 1
+  }
+}

@@ -99,3 +99,12 @@ def add_mock_request_get_fail(mock_context):
 def add_mock_request_cancel_success(mock_context):
     test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Cancel'
     mock_context.post(test_endpoint, text="true")
+
+
+def add_mock_request_get_dwh_1page(mock_context):
+    mock_response_path = mock_dir + "/report_response_warehouse_1page.json"
+    with open(mock_response_path) as fh:
+        response = fh.read()
+
+    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Get'
+    mock_context.post(test_endpoint, text=response)

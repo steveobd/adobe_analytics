@@ -20,6 +20,9 @@ class Suite(object):
     def queue(self, definition):
         return self._downloader.queue(definition)
 
+    def cancel(self, report_id):
+        return self._downloader.cancel(report_id)
+
     @functools.lru_cache(maxsize=None)
     def metrics(self):
         response = self.client.request(
