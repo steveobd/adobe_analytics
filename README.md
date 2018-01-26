@@ -19,7 +19,7 @@ or via git:
 
     pip install git+http://github.com/SaturnFromTitan/adobe_analytics.git
 
-Currently only Python 3.5 and 3.6 are supported.
+Supports Python 3.5+
 
 ## Examples
 Please check out the code snippets in the folder `examples`. They showcase common use cases and should give you a

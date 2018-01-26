@@ -44,7 +44,10 @@ class Client(object):
             data=json.dumps(data),
             headers=self._build_headers()
         )
-        return response.json()
+        json_response = response.json()
+        if isinstance(json_response, dict) and ("error" in json_response):
+            self.raise_error(json_response)
+        return json_response
 
     def _build_headers(self):
         nonce = str(uuid.uuid4())
@@ -67,6 +70,15 @@ class Client(object):
     def _serialize_header(properties):
         header = ['{key}="{value}"'.format(key=k, value=v) for k, v in properties.items()]
         return ', '.join(header)
+
+    @staticmethod
+    def raise_error(response):
+        error_description = response["error_description"]
+
+        if response["error"] == "report_not_ready":
+            raise FileNotFoundError(error_description)
+        else:
+            raise Exception(error_description)
 
     def __repr__(self):
         return "User: {0} | Endpoint: {1}".format(self.username, self.endpoint)

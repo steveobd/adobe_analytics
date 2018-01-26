@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from tests import fix_client, fix_suite  # import is used
 from tests import mock_dir
+import pytest
 import collections
 
 
@@ -40,3 +41,27 @@ def test_serialize_header(fix_client):
 def test_client_representation(fix_client):
     result = fix_client.__repr__()
     assert result == "User: my_username | Endpoint: https://api.omniture.com/admin/1.4/rest/"
+
+
+def test_raise_error_report_not_ready():
+    from adobe_analytics.client import Client
+
+    response = {
+        "error": "report_not_ready",
+        "error_description": "Report not ready",
+        "error_uri": None
+    }
+    with pytest.raises(FileNotFoundError):
+        Client.raise_error(response)
+
+
+def test_raise_error_other_error():
+    from adobe_analytics.client import Client
+
+    response = {
+        "error": "Bad Request",
+        "error_description": "Authentication key not found",
+        "error_uri": None
+    }
+    with pytest.raises(Exception):
+        Client.raise_error(response)

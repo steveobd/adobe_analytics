@@ -60,18 +60,17 @@ class ReportDownloader:
 
     def get_attempt(self, report_id, page_number=1):
         client = self.suite.client
-        response = client.request(
-            api="Report",
-            method="Get",
-            data={
-                "reportID": report_id,
-                "page": page_number
-            }
-        )
-        is_ready = ("error" not in response) or (response["error"] != "report_not_ready")
-        if is_ready:
+        try:
+            response = client.request(
+                api="Report",
+                method="Get",
+                data={
+                    "reportID": report_id,
+                    "page": page_number
+                }
+            )
             return response
-        else:
+        except FileNotFoundError:
             return None
 
     @staticmethod
