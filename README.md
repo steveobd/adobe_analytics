@@ -19,15 +19,13 @@ or via git:
 
     pip install git+http://github.com/SaturnFromTitan/adobe_analytics.git
 
-Currently supported Python versions:
-* 3.5
-* 3.6
+Currently only Python 3.5 and 3.6 are supported.
 
 ## Examples
 Please check out the code snippets in the folder `examples`. They showcase common use cases and should give you a
 pretty clear understanding of how to use this framework.
 
-### Tests
+## Tests
 Execute tests in the terminal via
 ```bash
 py.test -v
@@ -35,7 +33,7 @@ py.test -v
 
 Note that tests are automatically executed on every push via [travis-ci.org](travis-ci.org).
 
-### Contributors
+## Contributors
 I took over [this branch](https://github.com/dancingcactus/python-omniture) as the project seems to be
 abandoned there. Thanks to everyone who put work into this project!
 
