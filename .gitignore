@@ -7,6 +7,7 @@ dist
 coverage.xml
 htmlcov
 aa_credentials.json
+pip_distribution_instructions.md
 .idea
 
 ### Python template
@@ -114,4 +115,3 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-
