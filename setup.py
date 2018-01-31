@@ -27,42 +27,44 @@ PACKAGES = [
 ]
 
 DEPENDENCIES = [
-    'requests',
-    'python-dateutil',
+    "requests",
+    "python-dateutil",
+    "more-itertools",
+    "pandas"
 ]
 
 CLASSIFIERS = [
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
-    'Operating System :: OS Independent',
-    'Programming Language :: Python',
-    'Topic :: Scientific/Engineering :: Information Analysis',
-    'Programming Language :: Python :: 3.5',
-    'Programming Language :: Python :: 3.6'
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6"
 ]
 
 KEYWORDS = [
-    'data',
-    'analytics',
-    'api',
-    'wrapper',
-    'adobe',
-    'omniture',
-    'sitecatalyst',
-    'python',
-    'report',
-    'bi'
+    "data",
+    "analytics",
+    "api",
+    "wrapper",
+    "adobe",
+    "omniture",
+    "sitecatalyst",
+    "python",
+    "report",
+    "bi"
 ]
 
 setuptools.setup(
-    name='adobe_analytics',
-    description='A wrapper for the Adobe Analytics API.',
+    name="adobe_analytics",
+    description="A wrapper for the Adobe Analytics API.",
     keywords=" ".join(KEYWORDS),
-    author='Martin Winkel',
-    author_email='martin.winkel.pps@gmail.com',
-    url='https://github.com/SaturnFromTitan/adobe_analytics',
+    author="Martin Winkel",
+    author_email="martin.winkel.pps@gmail.com",
+    url="https://github.com/SaturnFromTitan/adobe_analytics",
     version=find_version("adobe_analytics", "__init__.py"),
-    license='MIT',
+    license="MIT",
     packages=PACKAGES,
     install_requires=DEPENDENCIES,
     classifiers=CLASSIFIERS
