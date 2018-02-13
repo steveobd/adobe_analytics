@@ -2,12 +2,11 @@ import requests_mock
 import pandas as pd
 import numpy as np
 
-from tests import fix_client, fix_suite, fix_report_downloader, fix_report_definition  # import is used
 from tests import add_mock_request_queue, add_mock_request_get_success
 
 
 def test_queue_reports(fix_client, fix_report_definition):
-    from adobe_analytics.utils import _queue_reports
+    from adobe_analytics.reports.utils import _queue_reports
 
     with requests_mock.mock() as mock_context:
         add_mock_request_queue(mock_context)
@@ -19,7 +18,7 @@ def test_queue_reports(fix_client, fix_report_definition):
 
 
 def test_download_reports(fix_client):
-    from adobe_analytics.utils import _download_reports
+    from adobe_analytics.reports.utils import _download_reports
 
     with requests_mock.mock() as mock_context:
         add_mock_request_get_success(mock_context)
@@ -44,7 +43,7 @@ def test_download_reports(fix_client):
 
 
 def test_download_async(fix_client, fix_report_definition):
-    from adobe_analytics.utils import download_async
+    from adobe_analytics.reports.utils import download_async
 
     with requests_mock.mock() as mock_context:
         add_mock_request_get_success(mock_context)

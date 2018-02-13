@@ -2,8 +2,8 @@ import time
 import itertools
 import pandas as pd
 
-from adobe_analytics.report_definition import ReportDefinition
-from adobe_analytics.parse import parse
+from adobe_analytics.reports.report_definition import ReportDefinition
+from adobe_analytics.reports.parse import parse
 
 
 class ReportDownloader:

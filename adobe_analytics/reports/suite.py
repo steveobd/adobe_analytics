@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import functools
 
-from adobe_analytics.report_downloader import ReportDownloader
+from adobe_analytics.reports.report_downloader import ReportDownloader
 
 
 class Suite(object):

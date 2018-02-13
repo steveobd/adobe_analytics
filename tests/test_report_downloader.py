@@ -5,14 +5,13 @@ import pandas as pd
 import numpy as np
 
 from tests import mock_dir
-from tests import fix_client, fix_suite, fix_report_downloader, fix_report_definition  # import is used
 from tests import (add_mock_request_queue, add_mock_request_get_success,
                    add_mock_request_get_fail, add_mock_request_cancel_success,
                    add_mock_request_get_dwh_1page)
 
 
 def test_init(fix_suite):
-    from adobe_analytics.report_downloader import ReportDownloader
+    from adobe_analytics.reports.report_downloader import ReportDownloader
 
     ReportDownloader(fix_suite)
 
@@ -36,8 +35,8 @@ def test_to_report_id_from_float(fix_report_downloader):
 
 
 def test_build_request_data_definition(fix_report_definition):
-    from adobe_analytics.report_downloader import ReportDownloader
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_downloader import ReportDownloader
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     filled_definition = ReportDefinition.inject_suite_id(fix_report_definition, "yooyoy")
     result = ReportDownloader._build_request_data_definition(filled_definition)
@@ -45,7 +44,7 @@ def test_build_request_data_definition(fix_report_definition):
 
 
 def test_build_request_data_definition_without_suite_id(fix_report_definition):
-    from adobe_analytics.report_downloader import ReportDownloader
+    from adobe_analytics.reports.report_downloader import ReportDownloader
 
     with pytest.raises(AssertionError):
         json_def = fix_report_definition.raw
@@ -85,7 +84,7 @@ def test_download_with_report_id(fix_report_downloader):
 
 
 def test_sleep_interval():
-    from adobe_analytics.report_downloader import ReportDownloader
+    from adobe_analytics.reports.report_downloader import ReportDownloader
 
     assert ReportDownloader._sleep_interval(0) == 5
     assert ReportDownloader._sleep_interval(1) == 10
@@ -113,7 +112,7 @@ def test_cancel(fix_report_downloader):
 
 
 def test_to_stacked_dataframe():
-    from adobe_analytics.report_downloader import ReportDownloader
+    from adobe_analytics.reports.report_downloader import ReportDownloader
 
     file_path = mock_dir + "/report_response_2dim_and_granularity_missing_values.json"
     with open(file_path, mode="r") as json_file:

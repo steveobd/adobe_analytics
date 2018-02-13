@@ -1,10 +1,8 @@
 import pytest
 
-from tests import fix_report_definition  # import is used
-
 
 def test_init_dimensions_as_list():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -29,7 +27,7 @@ def test_init_dimensions_as_list():
 
 
 def test_init_dimensions_as_str():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -52,7 +50,7 @@ def test_init_dimensions_as_str():
 
 
 def test_init_dimensions_as_list_of_dict():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -79,7 +77,7 @@ def test_init_dimensions_as_list_of_dict():
 
 
 def test_init_no_metrics():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     with pytest.raises(TypeError):
         ReportDefinition(
@@ -89,7 +87,7 @@ def test_init_no_metrics():
 
 
 def test_init_no_dimensions():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     with pytest.raises(TypeError):
         ReportDefinition(
@@ -99,7 +97,7 @@ def test_init_no_dimensions():
 
 
 def test_no_dates():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -111,7 +109,7 @@ def test_no_dates():
 
 
 def test_abs_and_relative_dates():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -126,7 +124,7 @@ def test_abs_and_relative_dates():
 
 
 def test_dates_from_relative():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
     import datetime
 
     today = datetime.date.today()
@@ -144,7 +142,7 @@ def test_dates_from_relative():
 
 
 def test_with_segments():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -172,7 +170,7 @@ def test_with_segments():
 
 
 def test_with_granularity():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -198,7 +196,7 @@ def test_with_granularity():
 
 
 def test_with_sort_by():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -224,14 +222,14 @@ def test_with_sort_by():
 
 
 def test_inject_suite_id(fix_report_definition):
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition.inject_suite_id(fix_report_definition, "my_suite_id")
     assert definition["reportSuiteID"] == "my_suite_id"
 
 
 def test_granulairty_positive():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -243,7 +241,7 @@ def test_granulairty_positive():
 
 
 def test_granulairty_negative():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",
@@ -256,7 +254,7 @@ def test_granulairty_negative():
 
 
 def test_date_days_ago():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
     import datetime
 
     result = ReportDefinition._date_days_ago(4)
@@ -266,14 +264,14 @@ def test_date_days_ago():
 
 
 def test_clean_field_str():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     result = ReportDefinition._clean_field("pageviews")
     assert result == {"id": "pageviews"}
 
 
 def test_clean_field_dict():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     entry = {"id": "product", "classification": "Product Name"}
     result = ReportDefinition._clean_field(entry)
@@ -281,7 +279,7 @@ def test_clean_field_dict():
 
 
 def test_clean_field_list():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     with pytest.raises(ValueError):
         ReportDefinition._clean_field(["pageviews"])

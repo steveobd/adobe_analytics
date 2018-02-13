@@ -34,13 +34,13 @@ def fix_suite(fix_client):
 
 @pytest.fixture()
 def fix_report_downloader(fix_suite):
-    from adobe_analytics.report_downloader import ReportDownloader
+    from adobe_analytics.reports.report_downloader import ReportDownloader
     return ReportDownloader(fix_suite)
 
 
 @pytest.fixture()
 def fix_report_definition():
-    from adobe_analytics.report_definition import ReportDefinition
+    from adobe_analytics.reports.report_definition import ReportDefinition
 
     definition = ReportDefinition(
         metrics="pageviews",

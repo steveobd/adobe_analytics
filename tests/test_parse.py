@@ -3,7 +3,7 @@ import numpy as np
 import json
 
 from tests import mock_dir
-import adobe_analytics.parse as parse
+import adobe_analytics.reports.parse as parse
 
 
 def test_classification_or_name_with_classification():

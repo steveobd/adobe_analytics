@@ -6,7 +6,7 @@ import json
 import functools
 from datetime import datetime
 
-from adobe_analytics.suite import Suite
+from adobe_analytics.reports.suite import Suite
 
 
 class Client(object):

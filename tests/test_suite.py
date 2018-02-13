@@ -1,7 +1,6 @@
 import pandas as pd
 import requests_mock
 
-from tests import fix_client, fix_suite, fix_report_definition, fix_report_downloader  # import is used
 from tests import add_mock_request_queue, add_mock_request_get_success, add_mock_request_cancel_success
 
 
@@ -10,7 +9,7 @@ def test_representation(fix_suite):
 
 
 def test_response_to_dict():
-    from adobe_analytics.suite import Suite
+    from adobe_analytics.reports.suite import Suite
     response = [{
         "id": "pageviews",
         "name": "Page Views"

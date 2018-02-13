@@ -1,5 +1,4 @@
 #!/usr/bin/python
-from tests import fix_client, fix_suite  # import is used
 from tests import mock_dir
 import pytest
 import collections
@@ -19,7 +18,7 @@ def test_suites_is_dict(fix_client):
 
 
 def test_suite_is_suite(fix_suite):
-    from adobe_analytics.suite import Suite
+    from adobe_analytics.reports.suite import Suite
 
     assert isinstance(fix_suite, Suite)
 
