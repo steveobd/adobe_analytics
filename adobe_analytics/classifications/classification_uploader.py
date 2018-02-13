@@ -1,10 +1,11 @@
 import time
+import more_itertools
 import pandas as pd
 
-from adobe_analytics.classifications.classification_job import AAClassificationJob
+from adobe_analytics.classifications.classification_job import ClassificationJob
 
 
-class AAClassificationUploader:
+class ClassificationUploader:
     def __init__(self, client, suite_ids, variable_id, data, email, description="",
                  check_suite_compatibility=True, export_results=False, overwrite_conflicts=True):
         self._validate_data(data)
@@ -33,7 +34,13 @@ class AAClassificationUploader:
         return header, values
 
     def upload(self, values):
+        chunks = more_itertools.chunked(iterable=values, n=ClassificationJob.PAGE_SIZE)
+        for chunk in chunks:
+            self._upload_job(values=chunk)
+
+    def _upload_job(self, values):
         job = self._create_import()
+        print("Job ID:", job.id)
 
         job.add_data(values)
         job.commit()
@@ -57,7 +64,7 @@ class AAClassificationUploader:
             }
         )
         job_id = response["job_id"]
-        return AAClassificationJob(client=self._client, job_id=job_id)
+        return ClassificationJob(client=self._client, job_id=job_id)
 
     @staticmethod
     def check_status_until_finished(job, sleep_interval=10):
