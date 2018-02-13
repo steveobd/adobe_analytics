@@ -33,8 +33,8 @@ class ClassificationUploader:
         values = data.values.tolist()
         return header, values
 
-    def upload(self, values):
-        chunks = more_itertools.chunked(iterable=values, n=ClassificationJob.PAGE_SIZE)
+    def upload(self):
+        chunks = more_itertools.chunked(iterable=self.values, n=ClassificationJob.PAGE_SIZE)
         for chunk in chunks:
             self._upload_job(values=chunk)
 
