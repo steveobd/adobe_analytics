@@ -1,5 +1,7 @@
 import pytest
 
+from tests import fix_report_definition  # imports are used
+
 
 def test_init_dimensions_as_list():
     from adobe_analytics.reports.report_definition import ReportDefinition

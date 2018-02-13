@@ -1,7 +1,9 @@
 #!/usr/bin/python
-from tests import mock_dir
 import pytest
 import collections
+
+from tests import mock_dir
+from tests import fix_client, fix_suite  # imports are used
 
 
 def test_fom_json():

@@ -2,6 +2,8 @@ import pandas as pd
 import requests_mock
 
 from tests import add_mock_request_queue, add_mock_request_get_success, add_mock_request_cancel_success
+from tests import fix_client, fix_suite, fix_report_definition  # imports are used
+
 
 
 def test_representation(fix_suite):

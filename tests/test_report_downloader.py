@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 
 from tests import mock_dir
+from tests import fix_client, fix_suite, fix_report_downloader, fix_report_definition  # imports are used
 from tests import (add_mock_request_queue, add_mock_request_get_success,
                    add_mock_request_get_fail, add_mock_request_cancel_success,
                    add_mock_request_get_dwh_1page)
