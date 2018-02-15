@@ -8,7 +8,7 @@ from adobe_analytics import Client
 
 client = Client.from_json("my_path.json")
 
-# The request below returns a list of all evars available in the specified report suites.
+# The request below returns a list of all evars available in all specified report suites.
 result = client.request(
     api="ReportSuite",
     method="GetEvars",
