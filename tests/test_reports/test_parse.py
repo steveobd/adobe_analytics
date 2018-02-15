@@ -99,7 +99,7 @@ def test_dimension_value_name():
 
 
 def test_parse_data_1dim():
-    file_path = mock_dir+"/report_data_1dim.json"
+    file_path = mock_dir+"/Report.Get-data_1dim.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
 
@@ -111,7 +111,7 @@ def test_parse_data_1dim():
 
 
 def test_parse_data_2dim():
-    file_path = mock_dir + "/report_data_2dim.json"
+    file_path = mock_dir + "/Report.Get-data_2dim.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
 
@@ -127,7 +127,7 @@ def test_parse_data_2dim():
 
 
 def test_parse_data_1dim_and_granularity():
-    file_path = mock_dir + "/report_data_1dim_and_granularity.json"
+    file_path = mock_dir + "/Report.Get-data_1dim_and_granularity.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
 
@@ -143,7 +143,7 @@ def test_parse_data_1dim_and_granularity():
 
 
 def test_parse_data_2dim_and_granularity():
-    file_path = mock_dir + "/report_data_2dim_and_granularity.json"
+    file_path = mock_dir + "/Report.Get-data_2dim_and_granularity.json"
     with open(file_path, mode="r") as json_file:
         raw_data = json.load(json_file)
 
@@ -164,7 +164,7 @@ def test_parse_data_2dim_and_granularity():
 
 
 def test_parse_response_2dim():
-    file_path = mock_dir + "/Report.Get.Ready.json"
+    file_path = mock_dir + "/Report.Get-2dim.json"
     with open(file_path, mode="r") as json_file:
         raw_response = json.load(json_file)
     result = parse.parse(raw_response)
@@ -183,7 +183,7 @@ def test_parse_response_2dim():
 
 
 def test_parse_response_2dim_and_granularity_missing_values():
-    file_path = mock_dir + "/report_response_2dim_and_granularity_missing_values.json"
+    file_path = mock_dir + "/Report.Get-2dim_and_granularity_missing_values.json"
     with open(file_path, mode="r") as json_file:
         raw_response = json.load(json_file)
     result = parse.parse(raw_response)

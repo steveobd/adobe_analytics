@@ -79,7 +79,7 @@ def add_mock_request_queue(mock_context):
 
 
 def add_mock_request_get_success(mock_context):
-    mock_response_path = mock_dir+"/Report.Get.Ready.json"
+    mock_response_path = mock_dir+"/Report.Get-2dim.json"
     with open(mock_response_path) as fh:
         response = fh.read()
 
@@ -88,7 +88,7 @@ def add_mock_request_get_success(mock_context):
 
 
 def add_mock_request_get_fail(mock_context):
-    mock_response_path = mock_dir+"/Report.Get.NotReady.json"
+    mock_response_path = mock_dir+"/Report.Get-not_ready.json"
     with open(mock_response_path) as fh:
         response = fh.read()
 
@@ -102,7 +102,7 @@ def add_mock_request_cancel_success(mock_context):
 
 
 def add_mock_request_get_dwh_1page(mock_context):
-    mock_response_path = mock_dir + "/report_response_warehouse_1page.json"
+    mock_response_path = mock_dir + "/Report.Get-warehouse_1page.json"
     with open(mock_response_path) as fh:
         response = fh.read()
 

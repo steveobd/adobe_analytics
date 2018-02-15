@@ -115,7 +115,7 @@ def test_cancel(fix_report_downloader):
 def test_to_stacked_dataframe():
     from adobe_analytics.reports.report_downloader import ReportDownloader
 
-    file_path = mock_dir + "/report_response_2dim_and_granularity_missing_values.json"
+    file_path = mock_dir + "/Report.Get-2dim_and_granularity_missing_values.json"
     with open(file_path, mode="r") as json_file:
         raw_response = json.load(json_file)
     result = ReportDownloader._to_stacked_dataframe([raw_response, raw_response])
