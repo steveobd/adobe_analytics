@@ -9,17 +9,6 @@ class ClassificationJob:
         self._client = client
         self.id = job_id
 
-    def check_status(self):
-        response = self._client.request(
-            api="Classifications",
-            method="GetStatus",
-            data={
-                "job_id": self.id
-            }
-        )
-        status = response[0]["status"].lower()
-        return status
-
     def add_data(self, values):
         print("Adding data to job...")
 
@@ -53,3 +42,14 @@ class ClassificationJob:
             }
         )
         return response
+
+    def check_status(self):
+        response = self._client.request(
+            api="Classifications",
+            method="GetStatus",
+            data={
+                "job_id": self.id
+            }
+        )
+        status = response[0]["status"].lower()
+        return status
