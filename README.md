@@ -10,6 +10,10 @@ It is not meant to be comprehensive. Instead, it provides a high-level interface
 to many of the common reporting queries, and allows you to do construct other queries
 closer to the metal.
 
+## Features
+- All report requests possible in the UI are available via the API. Including DataWarehouse requests.
+- Easy interface for classification uploads are available.
+
 ## Installation
 Through PyPI:
 
