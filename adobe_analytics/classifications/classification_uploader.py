@@ -58,9 +58,9 @@ class ClassificationUploader:
                 "header": self.header,
                 "description": self.description,
                 "email_address": self.email,
-                "check_divisions": int(self.check_suite_compatibility),
-                "export_results": int(self.export_results),
-                "overwrite_conflicts": int(self.overwrite_conflicts)
+                "check_divisions": self.check_suite_compatibility,
+                "export_results": self.export_results,
+                "overwrite_conflicts": self.overwrite_conflicts
             }
         )
         job_id = response["job_id"]
