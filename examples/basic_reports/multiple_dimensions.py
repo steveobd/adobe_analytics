@@ -5,8 +5,15 @@ suites = client.suites()
 suite = suites["my_report_suite_id"]
 
 report_definition = ReportDefinition(
-    dimensions=["page", "product", "lasttouchchannel"],  # use lists for multiple values
-    metrics=["visits", "orders"],  # similar for metrics
+    dimensions=[
+        "page",
+        "product",
+        "lasttouchchannel"
+    ],
+    metrics=[
+        "visits",
+        "orders"
+    ],
     date_from="2017-01-01",
     date_to="2017-12-31",
     granularity="day"

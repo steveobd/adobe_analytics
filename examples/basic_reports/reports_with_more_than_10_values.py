@@ -8,10 +8,9 @@ suite = suites["my_report_suite_id"]
 # 10 values.
 # The 'top' parameter supports values up to 50k. If you need more values, you need to switch to utilize the warehouse
 report_definition = ReportDefinition(
-    dimensions=[{
-        "id": "page",
-        "top": 5000
-    }],
+    dimensions=[
+        {"id": "page", "top": 5000}
+    ],
     metrics="pageviews",
     date_from="2017-01-01",
     date_to="2017-12-31"
