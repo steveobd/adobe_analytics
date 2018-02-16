@@ -60,20 +60,20 @@ def fix_classification_uploader(fix_client):
     df = pd.DataFrame([
         [1, 2],
         [3, 4]
-    ], columns=["Key", ""])
+    ], columns=["Key", "product_code"])
 
-    job = ClassificationUploader(
+    uploader = ClassificationUploader(
         client=fix_client,
         suite_ids=["omniture.api-gateway"],
         variable_id="product",
-        data=,
-        email=,
+        data=df,
+        email="barack.obama@gmail.com",
         description="",
         check_suite_compatibility=True,
         export_results=False,
         overwrite_conflicts=True
     )
-    return job
+    return uploader
 
 
 @pytest.fixture()
