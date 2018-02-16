@@ -1,6 +1,8 @@
-from adobe_analytics import base_dir
+import pandas as pd
 import pytest
 import requests_mock
+
+from adobe_analytics import base_dir
 
 test_dir = base_dir+"/tests"
 mock_dir = test_dir+"/mock_objects"
@@ -51,6 +53,40 @@ def fix_report_definition():
     return definition
 
 
+@pytest.fixture()
+def fix_classification_uploader(fix_client):
+    from adobe_analytics.classifications.classification_uploader import ClassificationUploader
+
+    df = pd.DataFrame([
+        [1, 2],
+        [3, 4]
+    ], columns=["Key", ""])
+
+    job = ClassificationUploader(
+        client=fix_client,
+        suite_ids=["omniture.api-gateway"],
+        variable_id="product",
+        data=,
+        email=,
+        description="",
+        check_suite_compatibility=True,
+        export_results=False,
+        overwrite_conflicts=True
+    )
+    return job
+
+
+@pytest.fixture()
+def fix_classification_job(fix_client):
+    from adobe_analytics.classifications.classification_job import ClassificationJob
+
+    job = ClassificationJob(
+        client=fix_client,
+        job_id=987
+    )
+    return job
+
+
 def add_mock_requests_basic(mock_context):
     base_methods = [
         "Company.GetReportSuites",
@@ -65,7 +101,7 @@ def add_mock_requests_basic(mock_context):
         with open(mock_response_path) as fh:
             response = fh.read()
 
-            test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method='+method
+            test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method="+method
             mock_context.post(test_endpoint, text=response)
 
 
@@ -74,7 +110,7 @@ def add_mock_request_queue(mock_context):
     with open(mock_response_path) as fh:
         response = fh.read()
 
-    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Queue'
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Report.Queue"
     mock_context.post(test_endpoint, text=response)
 
 
@@ -83,7 +119,7 @@ def add_mock_request_get_success(mock_context):
     with open(mock_response_path) as fh:
         response = fh.read()
 
-    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Get'
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Report.Get"
     mock_context.post(test_endpoint, text=response)
 
 
@@ -92,12 +128,12 @@ def add_mock_request_get_fail(mock_context):
     with open(mock_response_path) as fh:
         response = fh.read()
 
-    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Get'
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Report.Get"
     mock_context.post(test_endpoint, text=response)
 
 
 def add_mock_request_cancel_success(mock_context):
-    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Cancel'
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Report.Cancel"
     mock_context.post(test_endpoint, text="true")
 
 
@@ -106,5 +142,50 @@ def add_mock_request_get_dwh_1page(mock_context):
     with open(mock_response_path) as fh:
         response = fh.read()
 
-    test_endpoint = 'https://api.omniture.com/admin/1.4/rest/?method=Report.Get'
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Report.Get"
+    mock_context.post(test_endpoint, text=response)
+
+
+def add_mock_request_classification_create_import(mock_context):
+    mock_response_path = mock_dir + "/Classifications.CreateImport.json"
+    with open(mock_response_path) as fh:
+        response = fh.read()
+
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Classifications.CreateImport"
+    mock_context.post(test_endpoint, text=response)
+
+
+def add_mock_request_classification_add_data(mock_context):
+    mock_response_path = mock_dir + "/Classifications.PopulateImport.json"
+    with open(mock_response_path) as fh:
+        response = fh.read()
+
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Classifications.PopulateImport"
+    mock_context.post(test_endpoint, text=response)
+
+
+def add_mock_request_classification_commit_job(mock_context):
+    mock_response_path = mock_dir + "/Classifications.CommitImport.json"
+    with open(mock_response_path) as fh:
+        response = fh.read()
+
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Classifications.CommitImport"
+    mock_context.post(test_endpoint, text=response)
+
+
+def add_mock_request_classification_get_status_in_progress(mock_context):
+    mock_response_path = mock_dir + "/Classifications.GetStatus-in_progress.json"
+    with open(mock_response_path) as fh:
+        response = fh.read()
+
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Classifications.GetStatus"
+    mock_context.post(test_endpoint, text=response)
+
+
+def add_mock_request_classification_get_status_done(mock_context):
+    mock_response_path = mock_dir + "/Classifications.GetStatus-done.json"
+    with open(mock_response_path) as fh:
+        response = fh.read()
+
+    test_endpoint = "https://api.omniture.com/admin/1.4/rest/?method=Classifications.GetStatus"
     mock_context.post(test_endpoint, text=response)
