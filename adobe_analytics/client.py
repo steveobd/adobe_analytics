@@ -4,10 +4,12 @@ import uuid
 import hashlib
 import json
 import functools
+import logging
 from datetime import datetime
 
-from adobe_analytics import logger
 from adobe_analytics.reports.suite import Suite
+
+logger = logging.getLogger(__name__)
 
 
 class Client(object):
@@ -39,7 +41,7 @@ class Client(object):
         api_method = '{0}.{1}'.format(api, method)
         data = data or dict()
 
-        logger.info("Request: {}.{}  Parameters: {}".format(api, method, data))
+        logger.info("{}.{} {}".format(api, method, data))
         response = requests.post(
             self.endpoint,
             params={'method': api_method},
