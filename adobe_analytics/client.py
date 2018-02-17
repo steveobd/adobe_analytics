@@ -6,6 +6,7 @@ import json
 import functools
 from datetime import datetime
 
+from adobe_analytics import logger
 from adobe_analytics.reports.suite import Suite
 
 
@@ -38,6 +39,7 @@ class Client(object):
         api_method = '{0}.{1}'.format(api, method)
         data = data or dict()
 
+        logger.info("Request: {}.{}  Parameters: {}".format(api, method, data))
         response = requests.post(
             self.endpoint,
             params={'method': api_method},
@@ -45,6 +47,7 @@ class Client(object):
             headers=self._build_headers()
         )
         json_response = response.json()
+        logger.debug("Response: {}".format(json_response))
         if isinstance(json_response, dict) and ("error" in json_response):
             self.raise_error(json_response)
         return json_response

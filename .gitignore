@@ -9,6 +9,7 @@ htmlcov
 aa_credentials.json
 pip_distribution_instructions.md
 .idea
+try.py
 
 ### Python template
 # Byte-compiled / optimized / DLL files
