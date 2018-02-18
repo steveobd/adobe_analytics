@@ -1,4 +1,7 @@
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def download_async(client, report_definition, suite_ids=None):
@@ -11,10 +14,7 @@ def download_async(client, report_definition, suite_ids=None):
     suites = client.suites()
     suite_ids = suite_ids or suites.keys()
 
-    print("queuing reports...")
     report_ids = _queue_reports(suite_ids, suites, report_definition)
-
-    print("downloading reports...")
     dfs = _download_reports(suite_ids, suites, report_ids)
     return pd.concat(dfs)
 
@@ -26,6 +26,7 @@ def _queue_reports(suite_ids, suites, report_definition):
     :param report_definition: ReportDefinition
     :return: dict, suite_id -> report_id
     """
+    logger.info("Queueing reports for {}".format(suite_ids))
     report_ids = dict()
     for suite_id in suite_ids:
         print(suite_id)
@@ -43,6 +44,7 @@ def _download_reports(suite_ids, suites, report_ids):
     :param report_ids: dict, suite_id -> report_id
     :return: list of DataFrame
     """
+    logger.info("Downloading reports for {}".format(suite_ids))
     dfs = list()
     for suite_id in suite_ids:
         print(suite_id)

@@ -1,5 +1,8 @@
 import copy
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ReportDefinition:
@@ -21,6 +24,7 @@ class ReportDefinition:
         self.kwargs = kwargs
 
     def inject_suite_id(self, suite_id):
+        logger.info("Injecting suite_id into report request")
         assert isinstance(suite_id, str)
 
         raw_definition = copy.deepcopy(self.raw)

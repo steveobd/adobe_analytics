@@ -1,4 +1,7 @@
 import more_itertools
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ClassificationJob:
@@ -10,7 +13,7 @@ class ClassificationJob:
         self.id = job_id
 
     def add_data(self, values):
-        print("Adding data to job...")
+        logger.info("Adding data to job...")
 
         chunks = more_itertools.chunked(iterable=values, n=ClassificationJob.PAGE_SIZE)
         for index, chunk in enumerate(chunks):
@@ -33,7 +36,6 @@ class ClassificationJob:
         return [{"row": row} for row in values]
 
     def commit(self):
-        print("committing job...")
         response = self._client.request(
             api="Classifications",
             method="CommitImport",

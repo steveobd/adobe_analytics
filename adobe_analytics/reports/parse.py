@@ -2,9 +2,13 @@ import pandas as pd
 import numpy as np
 import more_itertools
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def parse(raw_response):
+    logger.info("Parsing raw json response.")
     report = raw_response["report"]
     raw_data = report["data"]
 
@@ -15,6 +19,7 @@ def parse(raw_response):
 
 
 def _parse_header(report):
+    logger.debug("Parsing dimensions and metrics.")
     dimensions = [_classification_or_name(dimension) for dimension in report["elements"]]
     metrics = [metric["name"] for metric in report["metrics"]]
     return dimensions, metrics
@@ -33,6 +38,7 @@ def _parse_data(data, metric_count):
     :param metric_count: int, number of metrics in report
     :return: list of lists
     """
+    logger.debug("Parsing report data (recursively).")
     if len(data) > 0 and "breakdown" in data[0]:
         rows = list()
         for chunk in data:
@@ -52,6 +58,7 @@ def _parse_most_granular(data, metric_count):
     :param metric_count: int, number of metrics in report
     :return: list of lists
     """
+    logger.debug("Parsing most granular level of data.")
     rows = list()
     for chunk in data:
         part_rows = [(val if val != "" else np.nan) for val in chunk["counts"]]

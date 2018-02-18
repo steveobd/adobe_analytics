@@ -1,8 +1,11 @@
 import time
 import more_itertools
 import pandas as pd
+import logging
 
 from adobe_analytics.classifications.classification_job import ClassificationJob
+
+logger = logging.getLogger(__name__)
 
 
 class ClassificationUploader:
@@ -40,15 +43,12 @@ class ClassificationUploader:
 
     def _upload_job(self, values):
         job = self._create_import()
-        print("Job ID:", job.id)
 
         job.add_data(values)
         job.commit()
         self.check_status_until_finished(job)
 
     def _create_import(self):
-        print("Creating job for upload...")
-
         response = self._client.request(
             api="Classifications",
             method="CreateImport",
@@ -64,12 +64,13 @@ class ClassificationUploader:
             }
         )
         job_id = response["job_id"]
+        logger.info("Job ID: {}".format(job_id))
         return ClassificationJob(client=self._client, job_id=job_id)
 
     @staticmethod
     def check_status_until_finished(job, sleep_interval=10):
-        status = job.check_status()
+        status = "in progress"
         while "completed" not in status:
             time.sleep(sleep_interval)
             status = job.check_status()
-        print(status)
+            logger.info("Job status: {}".format(status))

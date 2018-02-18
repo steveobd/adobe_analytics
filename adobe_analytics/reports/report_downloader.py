@@ -1,9 +1,12 @@
 import time
 import itertools
 import pandas as pd
+import logging
 
 from adobe_analytics.reports.report_definition import ReportDefinition
 from adobe_analytics.reports.parse import parse
+
+logger = logging.getLogger(__name__)
 
 
 class ReportDownloader:
@@ -39,7 +42,7 @@ class ReportDownloader:
             data=request_data
         )
         report_id = int(response["reportID"])
-        print("ReportID:", report_id)
+        logger.info("ReportID: {}".format(report_id))
         return report_id
 
     @staticmethod
@@ -102,7 +105,7 @@ class ReportDownloader:
             api='Report',
             method='Cancel',
             data={
-                "reportID": int(report_id)
+                "reportID": report_id
             }
         )
         return response
