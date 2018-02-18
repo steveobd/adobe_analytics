@@ -12,7 +12,7 @@ from adobe_analytics.reports.suite import Suite
 logger = logging.getLogger(__name__)
 
 
-class Client(object):
+class Client:
     DEFAULT_ENDPOINT = "https://api.omniture.com/admin/1.4/rest/"
 
     def __init__(self, username, password, endpoint=DEFAULT_ENDPOINT):

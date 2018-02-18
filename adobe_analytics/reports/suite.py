@@ -6,7 +6,7 @@ import functools
 from adobe_analytics.reports.report_downloader import ReportDownloader
 
 
-class Suite(object):
+class Suite:
     def __init__(self, name, suite_id, client):
         self.name = name
         self.id = suite_id
