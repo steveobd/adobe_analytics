@@ -58,8 +58,9 @@ class ReportDownloader:
             if response is not None:
                 return response
 
-            interval = self._sleep_interval(poll_attempt)
-            time.sleep(interval)
+            sleep_interval = self._sleep_interval(poll_attempt)
+            logger.info("Sleeping for {}s.".format(sleep_interval))
+            time.sleep(sleep_interval)
 
     def get_attempt(self, report_id, page_number=1):
         client = self.suite.client

@@ -69,8 +69,10 @@ class ClassificationUploader:
 
     @staticmethod
     def check_status_until_finished(job, sleep_interval=10):
-        status = "in progress"
+        status = job.check_status()
+        logger.info("Job status: {}".format(status))
         while "completed" not in status:
+            logger.info("Sleeping for {}s.".format(sleep_interval))
             time.sleep(sleep_interval)
             status = job.check_status()
             logger.info("Job status: {}".format(status))
