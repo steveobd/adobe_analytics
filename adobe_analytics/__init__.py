@@ -16,3 +16,5 @@ base_dir = os.sep.join(app_dir_components[:-1])
 from adobe_analytics.client import Client
 from adobe_analytics.reports.report_definition import ReportDefinition
 from adobe_analytics.classifications.classification_uploader import ClassificationUploader
+
+from adobe_analytics.reports.utils import download_async
