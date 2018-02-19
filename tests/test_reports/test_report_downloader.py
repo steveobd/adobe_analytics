@@ -64,16 +64,8 @@ def test_check_success(fix_report_downloader):
     with requests_mock.mock() as mock_context:
         add_mock_request_get_success(mock_context)
 
-        response = fix_report_downloader.get_attempt(123)
+        response = fix_report_downloader.get_report(123)
         assert isinstance(response, dict)
-
-
-def test_check_fail(fix_report_downloader):
-    with requests_mock.mock() as mock_context:
-        add_mock_request_get_fail(mock_context)
-
-        response = fix_report_downloader.get_attempt(123)
-        assert response is None
 
 
 def test_download_with_report_id(fix_report_downloader):
@@ -82,25 +74,6 @@ def test_download_with_report_id(fix_report_downloader):
 
         df = fix_report_downloader.download(123)
         assert isinstance(df, pd.DataFrame)
-
-
-def test_sleep_interval():
-    from adobe_analytics.reports.report_downloader import ReportDownloader
-
-    assert ReportDownloader._sleep_interval(0) == 5
-    assert ReportDownloader._sleep_interval(1) == 10
-    assert ReportDownloader._sleep_interval(2) == 20
-
-
-def test_check_until_ready(monkeypatch, fix_report_downloader):
-    import time
-    monkeypatch.setattr(time, "sleep", lambda x: None)
-
-    with requests_mock.mock() as mock_context:
-        add_mock_request_get_fail(mock_context)
-
-        response = fix_report_downloader.check_until_ready(123, max_attempts=2)
-        assert response is None
 
 
 def test_cancel(fix_report_downloader):

@@ -1,12 +1,14 @@
-import time
-import itertools
 import pandas as pd
+from retrying import retry
 import logging
 
 from adobe_analytics.reports.report_definition import ReportDefinition
 from adobe_analytics.reports.parse import parse
 
 logger = logging.getLogger(__name__)
+
+MAX_WAIT = 5*60 * 10**3  # 5min
+BASE_WAIT = 2.5 * 10**3  # 2.5s -> 5s on first retry
 
 
 class ReportDownloader:
@@ -15,7 +17,7 @@ class ReportDownloader:
 
     def download(self, obj):
         report_id = self._to_report_id(obj)
-        first_response = self.check_until_ready(report_id)
+        first_response = self.get_report(report_id)
         raw_responses = [first_response]
 
         if "totalPages" in first_response["report"]:
@@ -50,37 +52,19 @@ class ReportDownloader:
         assert json_definition["reportSuiteID"] is not None
         return {"reportDescription": json_definition}
 
-    def check_until_ready(self, report_id, max_attempts=-1):
-        counter = itertools.count() if max_attempts == -1 else range(max_attempts)
-
-        for poll_attempt in counter:
-            response = self.get_attempt(report_id)
-            if response is not None:
-                return response
-
-            sleep_interval = self._sleep_interval(poll_attempt)
-            logger.info("Sleeping for {}s.".format(sleep_interval))
-            time.sleep(sleep_interval)
-
-    def get_attempt(self, report_id, page_number=1):
+    @retry(retry_on_exception=lambda x: isinstance(x, FileNotFoundError),
+           wait_exponential_multiplier=BASE_WAIT, wait_exponential_max=MAX_WAIT)
+    def get_report(self, report_id, page_number=1):
         client = self.suite.client
-        try:
-            response = client.request(
-                api="Report",
-                method="Get",
-                data={
-                    "reportID": report_id,
-                    "page": page_number
-                }
-            )
-            return response
-        except FileNotFoundError:
-            return None
-
-    @staticmethod
-    def _sleep_interval(poll_attempt):
-        exponential = 5 * 2**poll_attempt
-        return min(exponential, 300)  # max 5 min sleep
+        response = client.request(
+            api="Report",
+            method="Get",
+            data={
+                "reportID": report_id,
+                "page": page_number
+            }
+        )
+        return response
 
     def _download_other_pages(self, report, raw_response):
         """ data warehouse requests are returned in paged format """
@@ -90,7 +74,7 @@ class ReportDownloader:
         raw_responses = list()
         for page_number in range(2, total_page_count+1):
             print("page number:", page_number)
-            raw_response = self.get_attempt(report_id=report, page_number=page_number)
+            raw_response = self.get_report(report_id=report, page_number=page_number)
             raw_responses.append(raw_response)
         return raw_responses
 
