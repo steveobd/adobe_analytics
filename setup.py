@@ -23,14 +23,17 @@ def find_version(*file_paths):
 
 
 PACKAGES = [
-    "adobe_analytics"
+    "adobe_analytics",
+    "adobe_analytics.reports",
+    "adobe_analytics.classifications"
 ]
 
 DEPENDENCIES = [
     "requests",
     "python-dateutil",
     "more-itertools",
-    "pandas"
+    "pandas",
+    "retrying"
 ]
 
 CLASSIFIERS = [
