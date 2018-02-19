@@ -1,11 +1,14 @@
-import time
 import more_itertools
 import pandas as pd
+from retrying import retry
 import logging
 
 from adobe_analytics.classifications.classification_job import ClassificationJob
 
 logger = logging.getLogger(__name__)
+
+BASE_WAIT_CLASSIFICATION = 2.5 * 10**3  # 2.5s -> 5s on first retry
+MAX_WAIT_CLASSIFICATION = 20 * 10**3  # 20s
 
 
 class ClassificationUploader:
@@ -68,11 +71,7 @@ class ClassificationUploader:
         return ClassificationJob(client=self._client, job_id=job_id)
 
     @staticmethod
-    def check_status_until_finished(job, sleep_interval=10):
-        status = job.check_status()
-        logger.info("Job status: {}".format(status))
-        while "completed" not in status:
-            logger.info("Sleeping for {}s.".format(sleep_interval))
-            time.sleep(sleep_interval)
-            status = job.check_status()
-            logger.info("Job status: {}".format(status))
+    @retry(retry_on_result=lambda x: "completed" not in x,
+           wait_exponential_multiplier=BASE_WAIT_CLASSIFICATION, wait_exponential_max=MAX_WAIT_CLASSIFICATION)
+    def check_status_until_finished(job):
+        return job.check_status()

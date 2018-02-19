@@ -92,4 +92,4 @@ def test_check_status_until_finished(fix_classification_job):
 
     with requests_mock.mock() as mock_context:
         add_mock_request_classification_get_status_done(mock_context)
-        ClassificationUploader.check_status_until_finished(fix_classification_job, sleep_interval=0)
+        ClassificationUploader.check_status_until_finished(fix_classification_job)

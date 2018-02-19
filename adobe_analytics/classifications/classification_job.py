@@ -29,6 +29,7 @@ class ClassificationJob:
                     "rows": rows
                 }
             )
+            logger.info("is_success: {}".format(is_success))
             assert is_success, "Failed to add data."
 
     @staticmethod
@@ -43,6 +44,7 @@ class ClassificationJob:
                 "job_id": self.id
             }
         )
+        logger.debug("Response: {}".format(response))
         return response
 
     def check_status(self):
@@ -54,4 +56,5 @@ class ClassificationJob:
             }
         )
         status = response[0]["status"].lower()
+        logger.info("Job ID: {}".format(status))
         return status

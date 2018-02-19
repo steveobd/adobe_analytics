@@ -7,8 +7,8 @@ from adobe_analytics.reports.parse import parse
 
 logger = logging.getLogger(__name__)
 
-MAX_WAIT = 5*60 * 10**3  # 5min
-BASE_WAIT = 2.5 * 10**3  # 2.5s -> 5s on first retry
+BASE_WAIT_REPORT = 2.5 * 10**3  # 2.5s -> 5s on first retry
+MAX_WAIT_REPORT = 5 * 60 * 10**3  # 5min
 
 
 class ReportDownloader:
@@ -53,7 +53,7 @@ class ReportDownloader:
         return {"reportDescription": json_definition}
 
     @retry(retry_on_exception=lambda x: isinstance(x, FileNotFoundError),
-           wait_exponential_multiplier=BASE_WAIT, wait_exponential_max=MAX_WAIT)
+           wait_exponential_multiplier=BASE_WAIT_REPORT, wait_exponential_max=MAX_WAIT_REPORT)
     def get_report(self, report_id, page_number=1):
         client = self.suite.client
         response = client.request(
