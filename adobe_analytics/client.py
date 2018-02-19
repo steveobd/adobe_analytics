@@ -5,6 +5,7 @@ import hashlib
 import json
 import functools
 import logging
+from retrying import retry
 from datetime import datetime
 
 from adobe_analytics.reports.suite import Suite
@@ -36,6 +37,8 @@ class Client:
     def _suite_from_dict(suite_dict, client):
         return Suite(name=suite_dict["site_title"], suite_id=suite_dict["rsid"], client=client)
 
+    @retry(retry_on_exception=lambda x: not isinstance(x, FileNotFoundError),
+           stop_max_attempt_number=3, wait_random_min=5*10**3, wait_random_max=10*10**3)
     def request(self, api, method, data=None):
         """ Compare with https://marketing.adobe.com/developer/api-explorer """
         api_method = '{0}.{1}'.format(api, method)

@@ -7,7 +7,7 @@ import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 app_dir = os.path.dirname(__file__)
 app_dir_components = app_dir.split(os.sep)
 base_dir = os.sep.join(app_dir_components[:-1])
