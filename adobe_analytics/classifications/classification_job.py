@@ -5,8 +5,8 @@ logger = logging.getLogger(__name__)
 
 
 class ClassificationJob:
-    MAX_ROWS = 25000
-    PAGE_SIZE = 500
+    MAX_JOB_SIZE = 25000
+    MAX_PAGE_SIZE = 500
 
     def __init__(self, client, job_id):
         self._client = client
@@ -15,7 +15,7 @@ class ClassificationJob:
     def add_data(self, values):
         logger.info("Adding data to job...")
 
-        chunks = more_itertools.chunked(iterable=values, n=ClassificationJob.PAGE_SIZE)
+        chunks = more_itertools.chunked(iterable=values, n=ClassificationJob.MAX_PAGE_SIZE)
         for index, chunk in enumerate(chunks):
             page_number = index + 1
             rows = self._to_labeled_rows(chunk)
@@ -56,5 +56,5 @@ class ClassificationJob:
             }
         )
         status = response[0]["status"].lower()
-        logger.info("Job ID: {}".format(status))
+        logger.info("Status: {}".format(status))
         return status

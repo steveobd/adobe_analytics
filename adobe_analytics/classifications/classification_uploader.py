@@ -40,7 +40,7 @@ class ClassificationUploader:
         return header, values
 
     def upload(self):
-        chunks = more_itertools.chunked(iterable=self.values, n=ClassificationJob.PAGE_SIZE)
+        chunks = more_itertools.chunked(iterable=self.values, n=ClassificationJob.MAX_JOB_SIZE)
         for chunk in chunks:
             self._upload_job(values=chunk)
 

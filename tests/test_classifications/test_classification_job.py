@@ -32,7 +32,7 @@ def test_to_labeled_rows():
 
 def test_add_data(fix_classification_job):
     from adobe_analytics.classifications.classification_job import ClassificationJob
-    values = [[i, i+1] for i in range(ClassificationJob.PAGE_SIZE+2)]
+    values = [[i, i+1] for i in range(ClassificationJob.MAX_PAGE_SIZE + 2)]
 
     with requests_mock.mock() as mock_context:
         add_mock_request_classification_add_data(mock_context)
