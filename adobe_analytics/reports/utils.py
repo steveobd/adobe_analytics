@@ -52,6 +52,6 @@ def _download_reports(suite_ids, suites, report_ids):
         report_id = report_ids[suite_id]
 
         df = suite.download(report_id)
-        df.insert(0, "suite id", suite_id)
+        df.insert(0, "Suite ID", suite_id)
         dfs.append(df)
     return dfs
