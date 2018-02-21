@@ -69,11 +69,11 @@ class ReportDownloader:
     def _download_other_pages(self, report, raw_response):
         """ data warehouse requests are returned in paged format """
         total_page_count = raw_response["report"]["totalPages"]
-        logger.info("total page count:", total_page_count)
+        logger.info("total page count: {}".format(total_page_count))
 
         raw_responses = list()
         for page_number in range(2, total_page_count+1):
-            logger.info("page number:", page_number)
+            logger.info("page number:".format(page_number))
             raw_response = self.get_report(report_id=report, page_number=page_number)
             raw_responses.append(raw_response)
         return raw_responses

@@ -29,7 +29,7 @@ def _queue_reports(suite_ids, suites, report_definition):
     logger.info("Queueing reports for {}".format(suite_ids))
     report_ids = dict()
     for suite_id in suite_ids:
-        logger.info("suite id:", suite_id)
+        logger.info("suite id: {}".format(suite_id))
         suite = suites[suite_id]
 
         report_id = suite.queue(report_definition)
@@ -47,7 +47,7 @@ def _download_reports(suite_ids, suites, report_ids):
     logger.info("Downloading reports for {}".format(suite_ids))
     dfs = list()
     for suite_id in suite_ids:
-        logger.info("Suite ID:", suite_id)
+        logger.info("suite id: {}".format(suite_id))
         suite = suites[suite_id]
         report_id = report_ids[suite_id]
 
