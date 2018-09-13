@@ -15,7 +15,7 @@ class ReportDownloader:
     def __init__(self, suite):
         self.suite = suite
 
-    def download(self, obj):
+    def download(self, obj, format='dataframe'):
         report_id = self._to_report_id(obj)
         first_response = self.get_report(report_id)
         raw_responses = [first_response]
@@ -23,7 +23,11 @@ class ReportDownloader:
         if "totalPages" in first_response["report"]:
             other_responses = self._download_other_pages(report_id, first_response)
             raw_responses += other_responses
-        return self._to_stacked_dataframe(raw_responses)
+
+        if format == 'json':
+            return raw_responses
+        else:
+            return self._to_stacked_dataframe(raw_responses)
 
     def _to_report_id(self, obj):
         assert isinstance(obj, (ReportDefinition, int, float))
