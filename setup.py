@@ -65,7 +65,7 @@ setuptools.setup(
     keywords=" ".join(KEYWORDS),
     author="Martin Winkel",
     author_email="martin.winkel.pps@gmail.com",
-    url="https://github.com/SaturnFromTitan/adobe_analytics",
+    url="https://github.com/steveobd/adobe_analytics",
     version=find_version("adobe_analytics", "__init__.py"),
     license="MIT",
     packages=PACKAGES,
