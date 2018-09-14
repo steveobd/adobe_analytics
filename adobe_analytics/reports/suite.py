@@ -13,9 +13,9 @@ class Suite:
         self.client = client
         self._downloader = ReportDownloader(self)
 
-    def download(self, obj):
+    def download(self, obj, format='dataframe'):
         """ obj can be ReportDefinition, report_id (int or float) """
-        return self._downloader.download(obj)
+        return self._downloader.download(obj,format)
 
     def queue(self, definition):
         return self._downloader.queue(definition)
