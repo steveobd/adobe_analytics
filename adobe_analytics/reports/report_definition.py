@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class ReportDefinition:
-    GRANULARITIES = ["hour", "day", "week", "month", "quarter", "year"]
+    GRANULARITIES = ["minute:5", "hour", "day", "week", "month", "quarter", "year"]
 
     def __init__(self, metrics, dimensions, segments=None, date_from=None,
                  date_to=None, last_days=None, granularity=None, **kwargs):

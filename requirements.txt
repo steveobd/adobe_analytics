@@ -1,8 +1,8 @@
 # for code
 requests==2.18.4
 more-itertools==4.1.0
-pandas==0.22.0
-numpy==1.14.1
+pandas
+numpy
 retrying==1.3.3
 
 # for tests
